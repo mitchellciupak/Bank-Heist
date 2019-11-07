@@ -1,0 +1,97 @@
+#include "stm32f0xx.h"
+#include "stm32f0_discovery.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+//Globals
+int EASY_MIN = 10;
+int MED_MIN = 6;
+int HARD_MIN = 3;
+
+int min = 0;
+int sec = 0;
+
+
+/*
+ * Function:  start_timer(mode)
+ * --------------------
+ * Description: Starts a count down timer on STM invoked with I2C
+ * Parameters:
+ * 		- mode: easy(1), medium(2), hard(3)
+ * Returns:void
+ * Example: start_timer(1)
+ * Updates:
+ *  	- 06/11/19 Mitchell Ciupak
+ */
+void start_timer(int mode) {
+
+	switch (mode)
+	{
+	    case 1:
+	    	min = 60 * EASY_MIN;
+	    	sec = 0;
+	        break;
+	    case 2:
+	    	min = 60 * MED_MIN;
+	    	sec = 0;
+	        break;
+	    case 3:
+	    	min = 60 * HARD_MIN;
+	    	sec = 0;
+	    	break;
+	    default:
+	    	min = 60 * EASY_MIN;
+	    	sec = 0;
+	}
+
+	init_time6();
+
+}
+
+/*
+ * Function:  init_tim6(void)
+ * --------------------
+ * Description: Enable's Timer 6(update event occurs every 1ms)
+ * Returns:void
+ * Example:init_time6();
+ * Updates:
+ *  	- 06/11/19 Mitchell Ciupak
+ */
+void init_tim6(void) {
+	    //Enable clock to Timer 6.
+		RCC->APB1ENR |= RCC_APB1ENR_TIM6EN;
+
+		//Set PSC and ARR values so that the timer update event occurs exactly once every 1ms
+		TIM6->PSC = 480 - 1;
+		TIM6->ARR = 100 - 1;
+
+		//Enable UIE in the TIMER6's DIER register.
+		TIM6->DIER |= TIM_DIER_UIE;
+		TIM6->CR1 = TIM_CR1_CEN;
+
+		//Enable TIM6 interrupt in NVIC's ISER register.
+		NVIC->ISER[0] = 1<<TIM6_DAC_IRQn;
+	}
+
+void TIM6_DAC_IRQHandler() {
+	//Acknowledge TIM6 interrupt
+		TIM6->SR &= ~TIM_SR_UIF;
+
+	//Count down
+
+		//Call
+		countdown();
+}
+
+void countdown() {
+    char line[20];
+    calls++;
+    if(calls == 1000) {
+    	calls = 0;
+		if(count >= 0) {
+			count--;
+		}
+
+		sprintf(line, "Time[%d:%d]",min,sec);
+    }
