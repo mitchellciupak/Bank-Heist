@@ -1,0 +1,37 @@
+#include "stm32f0xx.h"
+#include "stm32f0_discovery.h"
+#include <stdio.h>
+#include <stdlib.h>
+
+void setup_gpio() {
+	//enable the clock to GPIOA
+	RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
+	//Set PA0 to PA2 to Input and PA3 to Output (01000000)
+	GPIOA->MODER &= ~0x40;
+	GPIOA->MODER |= 0x40;
+}
+
+int startupRoutine(void) {
+	int difficulty = 0;
+
+	setup_gpio();
+
+	//Wait for wire to be pulled
+	while(!(GPIOA->IDR & (GPIO_IDR_0 | GPIO_IDR_1 | GPIO_IDR_2)));
+
+	//Select Difficulty Based on Wire Pulled
+	if((GPIOA->IDR & GPIO_IDR_0) == GPIO_IDR_0){ //Hard
+		difficulty = 1;
+	}
+	else if((GPIOA->IDR & GPIO_IDR_1) == GPIO_IDR_1){ //Medium
+		difficulty = 2;
+	}else{ //Easy
+		difficulty = 3;
+	}
+
+	//Turn On LED
+
+
+	return difficulty;
+}
+

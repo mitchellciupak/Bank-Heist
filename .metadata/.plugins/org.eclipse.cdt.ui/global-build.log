@@ -1,0 +1,81 @@
+17:01:11 **** Incremental Build of configuration Debug for project 362FinalProject ****
+make -j8 all 
+make: Nothing to be done for 'all'.
+17:01:13 **** Incremental Build of configuration Debug for project 362FinalProject ****
+make -j8 all 
+make: Nothing to be done for 'all'.
+17:01:32 **** Incremental Build of configuration Debug for project 362FinalProject ****
+make -j8 all 
+make: Nothing to be done for 'all'.
+17:01:34 **** Incremental Build of configuration Debug for project 362FinalProject ****
+make -j8 all 
+make: Nothing to be done for 'all'.
+17:01:47 **** Incremental Build of configuration Debug for project 362FinalProject ****
+make -j8 all 
+make: Nothing to be done for 'all'.
+17:01:54 **** Incremental Build of configuration Debug for project 362FinalProject ****
+make -j8 all 
+make: Nothing to be done for 'all'.
+17:02:15 **** Incremental Build of configuration Debug for project 362FinalProject ****
+make -j8 all 
+Building file: ../src/main.c
+Invoking: MCU GCC Compiler
+/home/shay/a/ciupak/Desktop/362-Mini-Project/362FinalProject/Debug
+arm-none-eabi-gcc -mcpu=cortex-m0 -mthumb -mfloat-abi=soft -DSTM32 -DSTM32F0 -DSTM32F051R8Tx -DSTM32F0DISCOVERY -DDEBUG -DSTM32F051 -DUSE_STDPERIPH_DRIVER -I"/home/shay/a/ciupak/Desktop/362-Mini-Project/362FinalProject/Utilities" -I"/home/shay/a/ciupak/Desktop/362-Mini-Project/362FinalProject/StdPeriph_Driver/inc" -I"/home/shay/a/ciupak/Desktop/362-Mini-Project/362FinalProject/inc" -I"/home/shay/a/ciupak/Desktop/362-Mini-Project/362FinalProject/CMSIS/device" -I"/home/shay/a/ciupak/Desktop/362-Mini-Project/362FinalProject/CMSIS/core" -O0 -g3 -Wall -fmessage-length=0 -ffunction-sections -c -MMD -MP -MF"src/main.d" -MT"src/main.o" -o "src/main.o" "../src/main.c"
+../src/main.c: In function 'main':
+../src/main.c:17:6: warning: unused variable 'difficulty' [-Wunused-variable]
+  int difficulty = startupRoutine();
+      ^~~~~~~~~~
+Finished building: ../src/main.c
+ 
+Building target: 362FinalProject.elf
+Invoking: MCU GCC Linker
+arm-none-eabi-gcc -mcpu=cortex-m0 -mthumb -mfloat-abi=soft -T"/home/shay/a/ciupak/Desktop/362-Mini-Project/362FinalProject/LinkerScript.ld" -Wl,-Map=output.map -Wl,--gc-sections -o "362FinalProject.elf" @"objects.list"   -lm
+Finished building target: 362FinalProject.elf
+ 
+make --no-print-directory post-build
+Generating binary and Printing size information:
+arm-none-eabi-objcopy -O binary "362FinalProject.elf" "362FinalProject.bin"
+arm-none-eabi-size "362FinalProject.elf"
+   text	   data	    bss	    dec	    hex	filename
+  31964	   2492	    272	  34728	   87a8	362FinalProject.elf
+ 
+17:02:38 **** Incremental Build of configuration Debug for project 362FinalProject ****
+make -j8 all 
+make: Nothing to be done for 'all'.
+17:03:07 **** Incremental Build of configuration Debug for project 362FinalProject ****
+make -j8 all 
+make: Nothing to be done for 'all'.
+17:05:49 **** Incremental Build of configuration Debug for project 362FinalProject ****
+make -j8 all 
+Building file: ../src/main.c
+Invoking: MCU GCC Compiler
+/home/shay/a/ciupak/Desktop/362-Mini-Project/362FinalProject/Debug
+arm-none-eabi-gcc -mcpu=cortex-m0 -mthumb -mfloat-abi=soft -DSTM32 -DSTM32F0 -DSTM32F051R8Tx -DSTM32F0DISCOVERY -DDEBUG -DSTM32F051 -DUSE_STDPERIPH_DRIVER -I"/home/shay/a/ciupak/Desktop/362-Mini-Project/362FinalProject/Utilities" -I"/home/shay/a/ciupak/Desktop/362-Mini-Project/362FinalProject/StdPeriph_Driver/inc" -I"/home/shay/a/ciupak/Desktop/362-Mini-Project/362FinalProject/inc" -I"/home/shay/a/ciupak/Desktop/362-Mini-Project/362FinalProject/CMSIS/device" -I"/home/shay/a/ciupak/Desktop/362-Mini-Project/362FinalProject/CMSIS/core" -O0 -g3 -Wall -fmessage-length=0 -ffunction-sections -c -MMD -MP -MF"src/main.d" -MT"src/main.o" -o "src/main.o" "../src/main.c"
+../src/main.c: In function 'main':
+../src/main.c:17:6: warning: unused variable 'difficulty' [-Wunused-variable]
+  int difficulty = startupRoutine();
+      ^~~~~~~~~~
+Finished building: ../src/main.c
+ 
+Building target: 362FinalProject.elf
+Invoking: MCU GCC Linker
+arm-none-eabi-gcc -mcpu=cortex-m0 -mthumb -mfloat-abi=soft -T"/home/shay/a/ciupak/Desktop/362-Mini-Project/362FinalProject/LinkerScript.ld" -Wl,-Map=output.map -Wl,--gc-sections -o "362FinalProject.elf" @"objects.list"   -lm
+Finished building target: 362FinalProject.elf
+ 
+make --no-print-directory post-build
+Generating binary and Printing size information:
+arm-none-eabi-objcopy -O binary "362FinalProject.elf" "362FinalProject.bin"
+arm-none-eabi-size "362FinalProject.elf"
+   text	   data	    bss	    dec	    hex	filename
+  32020	   2492	    272	  34784	   87e0	362FinalProject.elf
+ 
+17:05:55 **** Incremental Build of configuration Debug for project 362FinalProject ****
+make -j8 all 
+make: Nothing to be done for 'all'.
+17:06:01 **** Incremental Build of configuration Debug for project 362FinalProject ****
+make -j8 all 
+make: Nothing to be done for 'all'.
+17:06:23 **** Incremental Build of configuration Debug for project 362FinalProject ****
+make -j8 all 
+make: Nothing to be done for 'all'.

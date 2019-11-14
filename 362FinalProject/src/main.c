@@ -3,13 +3,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "menu.h"
+
 //Function Declarations
 int chooseDifficulty(void);
 
 int main(void)
 {
 	/*Game Menu*/
-	int difficulty = chooseDifficulty();
+	int difficulty = startupRoutine();
+	//int difficulty = chooseDifficulty();
 
 
 }
@@ -25,7 +28,9 @@ int chooseDifficulty(void) {
 	int diff = 0;
 	while(diff == 0) {
 		//Read input
-		diff = GPIOA->IDR[0];
+		diff = GPIOA->IDR & 1;
 	}
 	return diff;
 }
+
+
