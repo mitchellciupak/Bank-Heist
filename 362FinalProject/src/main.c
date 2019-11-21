@@ -7,6 +7,7 @@
 
 //Function Declarations
 int chooseDifficulty(void);
+int init_7seg(void);
 
 int main(void)
 {
@@ -32,5 +33,4 @@ int chooseDifficulty(void) {
 	}
 	return diff;
 }
-
 
