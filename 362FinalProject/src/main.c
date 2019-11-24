@@ -21,15 +21,15 @@ int main(void)
 
 int chooseDifficulty(void) {
 	//enable the clock to GPIOA
-	RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
+	RCC->AHBENR |= RCC_AHBENR_GPIOCEN;
 
 	//Set PA0 to input mode (00)
-	GPIOA->MODER &= 0b00;
+	GPIOC->MODER &= 0b00;
 
 	int diff = 0;
 	while(diff == 0) {
 		//Read input
-		diff = GPIOA->IDR[0];
+		diff = GPIOC->IDR[0];
 	}
 	return diff;
 }
@@ -66,17 +66,11 @@ int get_key_release() {
 
 void setup_gpio() {
 	// onfigs keypad input and
-	RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
-	GPIOA->MODER &= ~0x3fffff;
-	GPIOA->MODER |= 0x2a0055
-	GPIOA->AFR[1] &= ~0xf;
-	GPIOA->AFR[1] |= 0x2;
-	GPIOA->AFR[1] &= ~0xf0;
-	GPIOA->AFR[1] |= 0x20;
-	GPIOA->AFR[1] &= ~0xf00;
-	GPIOA->AFR[1] |= 0x200;
-	GPIOA->PUPDR &= ~0xff00;
-	GPIOA->PUPDR |= 0xaa00;
+	RCC->AHBENR |= RCC_AHBENR_GPIOCEN;
+	GPIOC->MODER &= ~0xffff;
+	GPIOC->MODER |= 0x0055; //4 pull downinputs (00) 4 outputs (01)
+	GPIOC->PUPDR &= ~0xff00;
+	GPIOC->PUPDR |= 0xaa00;
 }
 
 void setup_timer6() {
@@ -89,7 +83,7 @@ void setup_timer6() {
 }
 void TIM6_DAC_IRQHandler() {
 	TIM6->SR &= ~TIM_SR_UIF;
-	int row = (GPIOA->IDR >> 4) & 0xf;
+	int row = (GPIOC->IDR >> 4) & 0xf;
 	int index = col << 2;
 	for (int i = 0; i < 4; i++){
 		history[index+i] = history[index+i] << 1;
@@ -100,7 +94,7 @@ void TIM6_DAC_IRQHandler() {
 	if (col > 3){
 		col = 0;
 	}
-	GPIOA->ODR = (1 << col);
+	GPIOC->ODR = (1 << col);
 
 }
 
