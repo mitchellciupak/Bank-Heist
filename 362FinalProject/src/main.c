@@ -4,6 +4,9 @@
 #include <stdlib.h>
 
 // data sheet: https://cdn-shop.adafruit.com/datasheets/ht16K33v110.pdf
+
+// cpp version of i2c: https://github.com/adafruit/Adafruit_LED_Backpack/blob/master/Adafruit_LEDBackpack.cpp
+// What I know: 7-bit address, ack bit, i2c address = 0x70, 0x71, 0x72, 0x73
 //Function Declarations
 void init_7seg(void);
 
@@ -21,31 +24,27 @@ void init_7seg(){
 	GPIOB->AFR[1] |= 1 << (4 * (8-8)) | 1<< (4 * (9-8));
 
 	// Enable I2C
-	RCC->APB1ENR |= RCC_APB1ENR_I2C1EN;
-
+    RCC->APB1ENR |= RCC_APB1ENR_I2C1EN; // Enable clock to i2c1
 	// Disable I2C1
 	I2C1->CR1 &= ~I2C_CR1_PE;
+    I2C1->CR2 &= ~I2C_CR2_ADD10; // Set I2C1 to 7 bit mode
+    I2C1->CR2 |= I2C_CR2_NACK;	// Enable NACK generation
 
-	I2C1->CR1 &= ~I2C_CR1_PE;	// Set I2C1 to 7 bit mode
-	I2C1->CR2 &= ~I2C_CR2_HEAD10R;	//
-	I2C1->CR2 |= I2C_CR2_NACK;	// Enable NACK generation
+    // I2C1 timing register config (p642 table 83 of FRM)
+    I2C1->TIMINGR = 0;
+    I2C1->TIMINGR &= ~I2C_TIMINGR_PRESC;// Clear prescaler
+    I2C1->TIMINGR |= 4 << 28; // Set prescaler to 4
+    I2C1->TIMINGR |= 3 << 20; // SCLDEL
+    I2C1->TIMINGR |= 1 << 16; // SDADEL
+    I2C1->TIMINGR |= 3 << 8; // SCLH
+    I2C1->TIMINGR |= 9 << 0; // SCLL
 
-	// Configure the I2C1 timing register to 400kHz
-	I2C1->TIMINGR &= ~(0xFF << 4*6);
-	I2C1->TIMINGR &= ~(1 << I2C_TIMINGR_PRESC);
-	I2C1->TIMINGR |= 3 << I2C_TIMINGR_SCLDEL;
-	I2C1->TIMINGR |= 1 << I2C_TIMINGR_SDADEL;
-	I2C1->TIMINGR |= 9 << I2C_TIMINGR_SCLL;
-	I2C1->TIMINGR |= 3 << I2C_TIMINGR_SCLH;
 
-	// Disable own address1 and own address 2
-    I2C1->OAR1 &= ~I2C_OAR1_OA1EN;
-    I2C1->OAR1 &= ~I2C_OAR1_OA1;
-    I2C1->OAR2 &= ~I2C_OAR2_OA2EN;
-    I2C1->OAR2 &= ~I2C_OAR2_OA2;
+    I2C1->OAR1 &= ~I2C_OAR1_OA1EN; // Disable own address 1
+    I2C1->OAR2 &= ~I2C_OAR2_OA2EN; // Disable own address 2
+    I2C1->OAR1 = I2C_OAR1_OA1EN | 0x2;// Set 7-bit own address 1
 
-	// Enable I2C1
-	I2C1->CR1 |= I2C_CR1_PE;
+    I2C1->CR1 |= I2C_CR1_PE; // Enable I2C1
 }
 
 void I2C1_start(uint8_t addr, uint32_t dir) {
@@ -84,8 +83,6 @@ void I2C1_stop() {
     I2C1->ICR |= I2C_ICR_STOPCF;
 }
 
-
-
 int I2C1_senddata(uint8_t* data, uint32_t size) {
     // Clear the NBYTES of CR2.
     I2C1->CR2 &= ~(I2C_CR2_NBYTES);
@@ -117,10 +114,22 @@ int I2C1_senddata(uint8_t* data, uint32_t size) {
     return SUCCESS;
 }
 
+
+/* Setup routine:
+ *
+ * 		Device address		0x70
+ * 		System setup		0x20 | 0x01		Turn on system oscillator
+ * 		Blink rate			0x80 | 0x01		Set blinking OFF
+ * 		Register dimming	0xE0 | 0x0F		Set brightness to full
+ */
+
 int main(void)
 {
 	init_7seg();
-
+	I2C1_start(0x70, 0);
+	uint8_t data[4] = {0x21, 0x81, 0xA0, 0xEF};
+	I2C1_senddata(data, 4);
+	I2C1_stop();
 }
 
 
