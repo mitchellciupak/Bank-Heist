@@ -13,7 +13,15 @@ int HARD_MIN = 3;
 int MIN = 0;
 int SEC = 0;
 
-
+/*
+ * Function:  menuSetupGPIO(void)
+ * --------------------
+ * Description: Initializes GPIOA
+ * Returns:void
+ * Example: menuSetupGPIO();
+ * Updates:
+ *  	- 06/11/19 Mitchell Ciupak - Init
+ */
 void menuSetupGPIO() {
 	//enable the clock to GPIOA
 	RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
@@ -29,8 +37,8 @@ void menuSetupGPIO() {
  * Returns:void
  * Example: int difficultyMode = startupRoutine();
  * Updates:
- *  	- 06/11/19 Mitchell Ciupak
- *  	- 01/12/19 Mitchell Ciupak
+ *  	- 06/11/19 Mitchell Ciupak - Init
+ *  	- 01/12/19 Mitchell Ciupak - Updated Name
  */
 int menuStartupDifficulty() {
 	int difficulty = 0;
@@ -67,7 +75,7 @@ int menuStartupDifficulty() {
  * Returns:void
  * Example: start_timer(1);
  * Updates:
- *  	- 06/11/19 Mitchell Ciupak
+ *  	- 06/11/19 Mitchell Ciupak - Init
  */
 void menuInit(int mode) {
 
@@ -90,7 +98,7 @@ void menuInit(int mode) {
 	    	SEC = 0;
 	}
 
-	menuInitTim6();
+	menuInitTim2();
 
 }
 
@@ -101,37 +109,39 @@ void menuInit(int mode) {
  * Returns:void
  * Example:init_time6();
  * Updates:
- *  	- 06/11/19 Mitchell Ciupak
+ *  	- 06/11/19 Mitchell Ciupak - Init
+ *  	- 01/12/19 Mitchell Ciupak - Moved to Timer 2 from Timer 6
  */
-void menuInitTim6(void) {
+void menuInitTim2(void) {
 	    //Enable clock to Timer 6.
-		RCC->APB1ENR |= RCC_APB1ENR_TIM6EN;
+		RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
 
 		//Set PSC and ARR values so that the timer update event occurs exactly once every 1ms
-		TIM6->PSC = 480 - 1;
-		TIM6->ARR = 100 - 1;
+		TIM2->PSC = 480 - 1;
+		TIM2->ARR = 100 - 1;
 
 		//Enable UIE in the TIMER6's DIER register.
-		TIM6->DIER |= TIM_DIER_UIE;
-		TIM6->CR1 = TIM_CR1_CEN;
+		TIM2->DIER |= TIM_DIER_UIE;
+		TIM2->CR1 = TIM_CR1_CEN;
 
 		//Enable TIM6 interrupt in NVIC's ISER register.
-		NVIC->ISER[0] = 1<<TIM6_DAC_IRQn;
+		NVIC->ISER[0] = 1<<TIM2_IRQn;
 	}
 
 /*
- * Function:  TIM6_DAC_IRQHandler()
+ * Function:  TIM2_IRQHandler()
  * --------------------
  * Description: TIM6 interrupt: Counts down from MIN and SEC
  * Returns:void
- * Example: NVIC->ISER[0] = 1<<TIM6_DAC_IRQn;
+ * Example: NVIC->ISER[0] = 1<<TIM2_IRQn;
  * Updates:
- *  	- 06/11/19 Mitchell Ciupak
+ *  	- 06/11/19 Mitchell Ciupak - Init
+ *  	- 01/12/19 Mitchell Ciupak - Moved to Timer 2 from Timer 6
  */
 int calls = 0;
-void TIM6_DAC_IRQHandler() {
+void TIM2_IRQHandler() {
 	//Acknowledge TIM6 interrupt
-		TIM6->SR &= ~TIM_SR_UIF;
+		TIM2->SR &= ~TIM_SR_UIF;
 
 	//Count down
 	calls++;
@@ -149,8 +159,8 @@ void TIM6_DAC_IRQHandler() {
  * Returns:void
  * Example: countdown();
  * Updates:
- *  	- 06/11/19 Mitchell Ciupak
- *  	- 01/12/19 Mitchell Ciupak
+ *  	- 06/11/19 Mitchell Ciupak - Init
+ *  	- 01/12/19 Mitchell Ciupak - Added Function Call
  */
 void menuCountdown() {
 	int total = MIN * 60 + SEC;

@@ -7,5 +7,5 @@
 
 //Function Declarations
 void segDisp(int min, int sec) {
-	printf("Time[%d:%d]",MIN,SEC); //For Debug Purposes Only
+	printf("Time[%d:%d]",min,sec); //For Debug Purposes Only
 }

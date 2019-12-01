@@ -9,7 +9,7 @@
 
 int main(void)
 {
-	/*Menu and Timer Init*/
+	/*Menu*/
 		//Find Difficulty
 		int difficultyMode = menuStartupDifficulty();
 
@@ -17,7 +17,7 @@ int main(void)
 		menuInit(difficultyMode);
 
 	/*Challenge 1: Keypad Challenge*/
-	keypadInit();
+	configKeyboard(); //TODO name to keypadInit();
 
 	/*Challenge 2: Pots Challenge*/
 	potsInit();

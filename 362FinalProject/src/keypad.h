@@ -58,6 +58,8 @@ void setup_timer6() {
     TIM6->CR1 |= TIM_CR1_CEN;
 }
 
+int col = 0;
+int index = 0;
 void TIM6_DAC_IRQHandler() {
 	TIM6->SR &= ~TIM_SR_UIF;
 	int row = (GPIOC->IDR >> 4) & 0xf;
