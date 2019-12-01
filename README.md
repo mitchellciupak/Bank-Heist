@@ -4,17 +4,26 @@
 
 ## Reserved Pins
 ### GPIOA
-#### PA0
-#### PA1
-#### PA2
-#### PA3
+#### PA0 - Menu
+#### PA1 - Menu
+#### PA2 - Menu
+#### PA3 - Menu
+#### PA4 - Pots Challenge
+
+### GPIOB
+#### PB8 - 7-Seg I2C
+#### PB9 - 7-Seg I2C
 
 ### GPIOC
-#### PC0
-#### PC1
-#### PC2
-#### PC3
-#### PC4
-#### PC5
-#### PC6
-#### PC7
+#### PC0 - Keypad Challenge
+#### PC1 - Keypad Challenge
+#### PC2 - Keypad Challenge
+#### PC3 - Keypad Challenge
+#### PC4 - Keypad Challenge
+#### PC5 - Keypad Challenge
+#### PC6 - Keypad Challenge
+#### PC7 - Keypad Challenge
+
+## Reserved Interrupts/Timers
+### Timer 2 - Menu Timer
+### Timer 6 - Keypad Challenge
