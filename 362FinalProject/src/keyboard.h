@@ -80,6 +80,10 @@ void configKeyboard(void) {
 }
 
 void keypadChallenge(void){
+	// SCROLL NOTE:
+	//	instead of automatically scrolling
+	//	offset stimulated by user keypad press
+	//	for the sake of program flow
 	int key = 0;
 	while(key != 'c') {
 		display1('I see you want to crack this safe');
@@ -101,9 +105,12 @@ void keypadChallenge(void){
 	}
 	int pos = 0;
 	char userI[4];
+
+	// GENERAL THOUGH PROCESSES:
+	//	no back space... just fill up 4 char array and if wrong will have sound to show improper val and will clear
 	while(key != 'c') {
 		// maybe generate values later...
-		display1('Or this into 0x47b9 to make 0xffff');
+		display1('XOR this into 0x47b9 to make 0xffff');
 		display2('0x' + userI);
 		int index = get_key_pressed();
 		key = lookup[index];
@@ -111,8 +118,8 @@ void keypadChallenge(void){
 	pos = 0;
 	while(key != 'c') {
 		// maybe generate values later...
-		display1('XOR this into 0x47b9 to make 0xffff');
-		display2('0x' + userI);
+		display1('Convert 11 to binary');
+		display2('0b' + userI);
 		int index = get_key_pressed();
 		key = lookup[index];
 	}
