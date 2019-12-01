@@ -1,0 +1,17 @@
+#include "stm32f0xx.h"
+#include "stm32f0_discovery.h"
+#include <stdio.h>
+#include <stdlib.h>
+
+void setup_gpio() {
+	//enable the clock to GPIOA
+	RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
+	//Set PA4 to analog mode.
+	GPIOA->MODER |= 0b1100000000;
+}
+
+int startupRoutine(void) {
+	setup_gpio();
+	while();
+}
+

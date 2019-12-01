@@ -1,0 +1,61 @@
+#include "stm32f0xx.h"
+#include "stm32f0_discovery.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+
+/*
+ * Function:  start_timer(mode)
+ * --------------------
+ * Description: Starts a count down timer on STM
+ * Parameters:
+ * 		- mode: Selects easy(1), medium(2), hard(3)
+ * Returns: void
+ * Example:
+ * Updates:
+ *  	- 06/11/19 Mitchell Ciupak
+ *  		- Init
+ */
+void start_timer(int mode) {
+
+	unsigned int seconds = 0;
+
+	switch (mode)
+	{
+	    case 1:
+	    	seconds = 60 * 10;
+	        break;
+	    case 2:
+	    	seconds = 60 * 5;
+	        break;
+	    case 3:
+	    	seconds = 60 * 1;
+	    	break;
+	    default:
+
+	}
+	clock_t x_startTime,x_countTime;
+	count_down_time_in_secs=10;  // 1 minute is 60, 1 hour is 3600
+
+
+	x_startTime=clock();  // start clock
+	time_left=count_down_time_in_secs-x_seconds;   // update timer
+
+	while (time_left>0)
+	{
+		x_countTime=clock(); // update timer difference
+		x_milliseconds=x_countTime-x_startTime;
+		x_seconds=(x_milliseconds/(CLOCKS_PER_SEC))-(x_minutes*60);
+		x_minutes=(x_milliseconds/(CLOCKS_PER_SEC))/60;
+		x_hours=x_minutes/60;
+
+
+
+
+		time_left=count_down_time_in_secs-x_seconds; // subtract to get difference
+
+
+		printf( "\nYou have %d seconds left ( %d ) count down timer by TopCoder 
+
+}

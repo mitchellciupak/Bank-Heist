@@ -1,0 +1,29 @@
+#include "stm32f0xx.h"
+#include "stm32f0_discovery.h"
+#include <stdio.h>
+#include <stdlib.h>
+
+void setup_gpio() {
+	//enable the clock to GPIOA
+	RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
+	//Set PA0 to PA2 to Input and PA3 to Output (01000000)
+	GPIOA->MODER &= ~0x40;
+	GPIOA->MODER |= 0x40;
+}
+
+int startupRoutine(void) {
+	setup_gpio();
+
+	while(!(GPIOA->ODR & (GPIO_ODR_0 | GPIO_ODR_1 | GPIO_ODR_2));
+
+	if((GPIOA->ODR & GPIO_ODR_0) == GPIO_ODR_0){ //Hard
+
+	}
+	else if(){ //Medium
+
+	}else{ //Easy
+
+	}
+
+}
+
