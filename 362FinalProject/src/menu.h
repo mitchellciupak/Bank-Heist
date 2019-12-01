@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "seg.h"
+
 //Globals
 int EASY_MIN = 10;
 int MED_MIN = 6;
@@ -11,7 +13,8 @@ int HARD_MIN = 3;
 int MIN = 0;
 int SEC = 0;
 
-void setup_gpio() {
+
+void menuSetupGPIO() {
 	//enable the clock to GPIOA
 	RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
 	//Set PA0 to PA2 to Input and PA3 to Output (01000000)
@@ -19,10 +22,20 @@ void setup_gpio() {
 	GPIOA->MODER |= 0x40;
 }
 
-int startupRoutine() {
+/*
+ * Function:  menuStartupDifficulty(void)
+ * --------------------
+ * Description: Finds Difficulty Based on Wires Pulled
+ * Returns:void
+ * Example: int difficultyMode = startupRoutine();
+ * Updates:
+ *  	- 06/11/19 Mitchell Ciupak
+ *  	- 01/12/19 Mitchell Ciupak
+ */
+int menuStartupDifficulty() {
 	int difficulty = 0;
 
-	setup_gpio();
+	menuSetupGPIO();
 
 	//Wait for wire to be pulled
 	while(!(GPIOA->IDR & GPIO_IDR_0) & !(GPIOA->IDR & GPIO_IDR_0) & !(GPIOA->IDR & GPIO_IDR_0));
@@ -46,7 +59,7 @@ int startupRoutine() {
 
 
 /*
- * Function:  start_timer(mode)
+ * Function:  menuInit(mode)
  * --------------------
  * Description: Starts a count down timer on STM invoked with I2C
  * Parameters:
@@ -56,7 +69,7 @@ int startupRoutine() {
  * Updates:
  *  	- 06/11/19 Mitchell Ciupak
  */
-void start_timer(int mode) {
+void menuInit(int mode) {
 
 	switch (mode)
 	{
@@ -77,12 +90,12 @@ void start_timer(int mode) {
 	    	SEC = 0;
 	}
 
-	init_time6();
+	menuInitTim6();
 
 }
 
 /*
- * Function:  init_tim6(void)
+ * Function:  menuInitTim6(void)
  * --------------------
  * Description: Enable's Timer 6(update event occurs every 1ms)
  * Returns:void
@@ -90,7 +103,7 @@ void start_timer(int mode) {
  * Updates:
  *  	- 06/11/19 Mitchell Ciupak
  */
-void init_tim6(void) {
+void menuInitTim6(void) {
 	    //Enable clock to Timer 6.
 		RCC->APB1ENR |= RCC_APB1ENR_TIM6EN;
 
@@ -105,9 +118,6 @@ void init_tim6(void) {
 		//Enable TIM6 interrupt in NVIC's ISER register.
 		NVIC->ISER[0] = 1<<TIM6_DAC_IRQn;
 	}
-
-
-//TODO CREATE WIRE PULL TO TRIGGER THIS INTERRUPT
 
 /*
  * Function:  TIM6_DAC_IRQHandler()
@@ -127,27 +137,28 @@ void TIM6_DAC_IRQHandler() {
 	calls++;
 	if(calls == 1000){
 		calls = 0;
-		countdown();
+		menuCountdown();
 	}
 
 }
 
 /*
- * Function: countdown()
+ * Function: menuCountdown()
  * --------------------
- * Description: Counts down from MIN and SEC
+ * Description: Counts down from MIN and SEC and calls seg
  * Returns:void
  * Example: countdown();
  * Updates:
  *  	- 06/11/19 Mitchell Ciupak
+ *  	- 01/12/19 Mitchell Ciupak
  */
-void countdown() {
+void menuCountdown() {
 	int total = MIN * 60 + SEC;
 	--total;
 
 	MIN = 60 % total;
 	SEC = total - (60 * MIN);
 
-	printf("Time[%d:%d]",MIN,SEC);
+	segDisp(MIN,SEC);
 
 }
