@@ -78,3 +78,50 @@ void configKeyboard(void) {
    setup_timer6();
    setup_gpio();
 }
+
+void keypadChallenge(void){
+	int key = 0;
+	while(key != 'c') {
+		display1('I see you want to crack this safe');
+		display2('Press c to continue');
+		int index = get_key_pressed();
+		key = lookup[index];
+	}
+	while(key != 'c') {
+		display1('This part of the security system requires you enter values into the keypad');
+		display2('Press c to continue');
+		int index = get_key_pressed();
+		key = lookup[index];
+	}
+	while(key != 'c') {
+		display1('Once you continue from here, the timer will start');
+		display2('Press c to continue');
+		int index = get_key_pressed();
+		key = lookup[index];
+	}
+	int pos = 0;
+	char userI[4];
+	while(key != 'c') {
+		// maybe generate values later...
+		display1('Or this into 0x47b9 to make 0xffff');
+		display2('0x' + userI);
+		int index = get_key_pressed();
+		key = lookup[index];
+	}
+	pos = 0;
+	while(key != 'c') {
+		// maybe generate values later...
+		display1('XOR this into 0x47b9 to make 0xffff');
+		display2('0x' + userI);
+		int index = get_key_pressed();
+		key = lookup[index];
+	}
+	pos = 0;
+	while(key != 'c') {
+		// maybe generate values later...
+		display1('XOR this into 0x47b9 to make 0xffff');
+		display2('0x' + userI);
+		int index = get_key_pressed();
+		key = lookup[index];
+	}
+}
