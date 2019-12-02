@@ -6,10 +6,20 @@
 #include "menu.h"
 #include "keypad.h"
 #include "pots.h"
+#include "lcd.h"
 
 int main(void)
 {
 	/*Menu*/
+        //Init LCD Display
+        initDisplay();
+
+        //Display initial message
+        const char * msg1 = "Safe Challenge!";
+        const char * msg2 = "(C) to continue";
+        topDisplayStatic(msg1);
+        bottomDisplayStatic(msg2);
+
 		//Find Difficulty
 		int difficultyMode = menuStartupDifficulty();
 
