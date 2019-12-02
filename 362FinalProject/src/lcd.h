@@ -18,14 +18,14 @@ void CMD(char);
 void Data_func(char);
 void nondma_display1(const char*);
 void nondma_display2(const char*);
-void bitbang_init_lcd(void);
-void bitbang_sendbyte(int);
-void bitbang_sendbit(int);
+void init_lcd(void);
+void sendByte(int);
+void sendBit(int);
 void initDisplay(void);
-void topDisplayStatic(const char *);
+void topDisplayStatic();
 void topDisplayScroll(const char *);
 void bottomDisplayScroll(const char *);
-void bottomDisplayStatic(const char *);
+void bottomDisplayStatic();
 
 void (*display1)(const char *) = 0;
 void (*display2)(const char *) = 0;
@@ -41,17 +41,20 @@ uint16_t dispmem[34] = {
         0x220, 0x220, 0x220, 0x220, 0x220, 0x220, 0x220, 0x220,
 };
 
+extern const char * msg1;
+extern const char * msg2;
+
 void initDisplay(){
     cmd = CMD;
     data = Data_func;
     display1 = nondma_display1;
     display2 = nondma_display2;
     // Initialize the display.
-    bitbang_init_lcd();
+    init_lcd();
 }
 
-void topDisplayStatic(const char *msg){
-    display1(msg);
+void topDisplayStatic(){
+    display1(msg1);
 }
 
 void topDisplayScroll(const char *msg){
@@ -76,17 +79,17 @@ void bottomDisplayScroll(const char *msg){
     }
 }
 
-void bottomDisplayStatic(const char *msg){
-    display2(msg);
+void bottomDisplayStatic(){
+    display2(msg2);
 }
 
 void CMD(char b) {
     const int NSS = 1<<12;
     GPIOB->BRR = NSS; // NSS low
     nano_wait(SPI_DELAY);
-    bitbang_sendbit(0); // RS = 0 for command.
-    bitbang_sendbit(0); // R/W = 0 for write.
-    bitbang_sendbyte(b);
+    sendBit(0); // RS = 0 for command.
+    sendBit(0); // R/W = 0 for write.
+    sendByte(b);
     nano_wait(SPI_DELAY);
     GPIOB->BSRR = NSS; // set NSS back to high
     nano_wait(SPI_DELAY);
@@ -97,9 +100,9 @@ void Data_func(char b) {
     const int NSS = 1<<12;
     GPIOB->BRR = NSS; // NSS low
     nano_wait(SPI_DELAY);
-    bitbang_sendbit(1); // RS = 1 for data.
-    bitbang_sendbit(0); // R/W = 0 for write.
-    bitbang_sendbyte(b);
+    sendBit(1); // RS = 1 for data.
+    sendBit(0); // R/W = 0 for write.
+    sendByte(b);
     nano_wait(SPI_DELAY);
     GPIOB->BSRR = NSS; // set NSS back to high
     nano_wait(SPI_DELAY);
@@ -131,7 +134,7 @@ void nondma_display2(const char *s) {
         data(' ');
 }
 
-void bitbang_sendbit(int b) {
+void sendBit(int b) {
     const int SCK = 1<<13;
     const int MOSI = 1<<15;
     // We do this slowly to make sure we don't exceed the
@@ -147,17 +150,17 @@ void bitbang_sendbit(int b) {
     nano_wait(SPI_DELAY);
 }
 
-void bitbang_sendbyte(int b) {
+void sendByte(int b) {
     int x;
     // Send the eight bits of a byte to the SPI channel.
     // Send the MSB first (big endian bits).
     for(x=8; x>0; x--) {
-        bitbang_sendbit(b & 0x80);
+        sendBit(b & 0x80);
         b <<= 1;
     }
 }
 
-void bitbang_init_lcd(void) {
+void init_lcd(void) {
     RCC->AHBENR |= RCC_AHBENR_GPIOBEN;
     GPIOB->BSRR = 1<<12; // set NSS high
     GPIOB->BRR = (1<<13) + (1<<15); // set SCK and MOSI low

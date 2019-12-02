@@ -8,6 +8,9 @@
 #include "pots.h"
 #include "lcd.h"
 
+const char * msg1;
+const char * msg2;
+
 int main(void)
 {
 	/*Menu*/
@@ -15,10 +18,10 @@ int main(void)
         initDisplay();
 
         //Display initial message
-        const char * msg1 = "Safe Challenge!";
-        const char * msg2 = "(C) to continue";
-        topDisplayStatic(msg1);
-        bottomDisplayStatic(msg2);
+        msg1 = "Safe Challenge!";
+        msg2 = "(C) to continue";
+        topDisplayStatic();
+        bottomDisplayStatic();
 
 		//Find Difficulty
 		int difficultyMode = menuStartupDifficulty();
