@@ -13,6 +13,10 @@ void init_7seg(void);
 #define RD 1
 #define WR 0
 
+void I2C1_waitidle(void) {
+    while ((I2C1->ISR & I2C_ISR_BUSY) == I2C_ISR_BUSY);  // while busy, wait.
+}
+
 void init_7seg(){
 	// Enable GPIOB pins
 	RCC->AHBENR |= RCC_AHBENR_GPIOBEN;
@@ -47,7 +51,7 @@ void init_7seg(){
     I2C1->CR1 |= I2C_CR1_PE; // Enable I2C1
 }
 
-void I2C1_start(uint8_t addr, uint32_t dir) {
+void I2C1_start1(uint8_t addr, uint32_t dir) {
     // dir: 0 = master requests a write transfer
     // dir: 1 = master requests a read transfer
 
@@ -65,22 +69,28 @@ void I2C1_start(uint8_t addr, uint32_t dir) {
 
     // Set the START bit in CR2 register.
     I2C1->CR2 |= I2C_CR2_START;
+
 }
 
+void I2C1_start(uint8_t addr, uint32_t dir) {
+    I2C1->CR2 &= ~I2C_CR2_SADD;	// clear SADD bits (0-9)
+    I2C1->CR2 |= addr << 1;	// Set SADD bits to address
+    if(dir == RD){		// Check direction bit with 'read direction'
+    	I2C1->CR2 |= I2C_CR2_RD_WRN;
+    }
+    else{
+    	I2C1->CR2 &= ~I2C_CR2_RD_WRN;
+    }
+    I2C1->CR2 |= I2C_CR2_START;
+}
 
 void I2C1_stop() {
-    //Check if the STOPF flag is set in ISR register. If so, return.
-    if(I2C1->ISR & I2C_ISR_STOPF) {
-        return;
-    }
-    //Set the STOP bit in CR2.
-    I2C1->CR2 |= I2C_CR2_STOP;
-
-    //Wait for the STOPF flag to be set in ISR register.
-    while((I2C1->ISR & I2C_ISR_STOPF) == 0);
-
-    //Clear the STOPF flag by writing to the STOPCF bit in the ICR register.
-    I2C1->ICR |= I2C_ICR_STOPCF;
+	if(I2C1->ISR & I2C_ISR_STOPF){	// Check if stopf flag is set
+		return;
+	}
+	I2C1->CR2 |= I2C_CR2_STOP;	// Set stop bit
+	while((I2C1->ISR & I2C_ISR_STOPF) == 0);	// Wait for stopf flag to be set
+	I2C1->ICR |= I2C_ICR_STOPCF;	// clear stopf flag
 }
 
 int I2C1_senddata(uint8_t* data, uint32_t size) {
@@ -122,14 +132,33 @@ int I2C1_senddata(uint8_t* data, uint32_t size) {
  * 		Blink rate			0x80 | 0x01		Set blinking OFF
  * 		Register dimming	0xE0 | 0x0F		Set brightness to full
  */
-
 int main(void)
 {
+
 	init_7seg();
+
+	uint8_t setup[4] = {0x21, 0xA0, 0xEF, 0x81};
+	for(int i = 0; i < 4; i++){
+		I2C1_waitidle();
+		I2C1_start(0x70, 0);
+		I2C1_senddata(&setup[i], 1);
+		I2C1_stop();
+	}
+
+
+	// The sequence commences with the initialisation of the address pointer
+	// by the address pointer command.
+	uint8_t data[8] = {0x00, 0x11, 0x22, 0x03, 0x04, 0x0F, 0xF0, 0xFF};
 	I2C1_start(0x70, 0);
-	uint8_t data[4] = {0x21, 0x81, 0xA0, 0xEF};
-	I2C1_senddata(data, 4);
+	I2C1_senddata(data, 8);
 	I2C1_stop();
+
+	uint8_t disp_on[1] = {0x21};
+	I2C1_start(0x70, 0);
+	I2C1_senddata(disp_on, 1);
+	I2C1_stop();
+	while(1);
+
 }
 
 
