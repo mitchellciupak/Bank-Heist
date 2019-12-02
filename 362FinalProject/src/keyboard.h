@@ -1,14 +1,18 @@
-/*
- * keyboard.h
- *
- *  Created on: Dec 1, 2019
- *      Author: emasunag
- */
+#include "stm32f0xx.h"
+#include "stm32f0_discovery.h"
+#include <stdint.h>
+#include <stdio.h>
 
 int8_t history[16] = {0};
 int8_t lookup[16] = {1,4,7,0xe,2,5,8,0,3,6,9,0xf,0xa,0xb,0xc,0xd};
 char char_lookup[16] = {'1','4','7','*','2','5','8','0','3','6','9','#','A','B','C','D'};
+int col = 0;
 
+void nano_wait(unsigned int n) {
+    asm(    "        mov r0,%0\n"
+            "repeat: sub r0,#83\n"
+            "        bgt repeat\n" : : "r"(n) : "r0", "cc");
+}
 
 int get_key_pressed() {
 	int key = get_key_press();
@@ -41,7 +45,7 @@ int get_key_release() {
 }
 
 void setup_gpio() {
-	// onfigs keypad input and
+	// configs keypad input
 	RCC->AHBENR |= RCC_AHBENR_GPIOCEN;
 	GPIOC->MODER &= ~0xffff;
 	GPIOC->MODER |= 0x0055; //4 pull downinputs (00) 4 outputs (01)
@@ -74,12 +78,11 @@ void TIM6_DAC_IRQHandler() {
 
 }
 
-void configKeyboard(void) {
-   setup_timer6();
-   setup_gpio();
-}
+
 
 void keypadChallenge(void){
+	setup_timer6();
+    setup_gpio();
 	// SCROLL NOTE:
 	//	instead of automatically scrolling
 	//	offset stimulated by user keypad press
@@ -108,27 +111,67 @@ void keypadChallenge(void){
 
 	// GENERAL THOUGH PROCESSES:
 	//	no back space... just fill up 4 char array and if wrong will have sound to show improper val and will clear
+	int i = 0;
 	while(key != 'c') {
 		// maybe generate values later...
+		if (i == 4){
+			if (userI == "b846")
+				break;
+			display1("Wrong!");
+			display2("try again...");
+			nano_wait(500000000); // 500ms
+			i = 0;
+		}
 		display1('XOR this into 0x47b9 to make 0xffff');
-		display2('0x' + userI);
+		char str [6];
+		strcpy(str, '0x');
+		strcat(str, userI);
+		display2(str);
 		int index = get_key_pressed();
 		key = lookup[index];
+		userI[i] = key;
+		i++;
 	}
-	pos = 0;
+	i = 0;
 	while(key != 'c') {
 		// maybe generate values later...
-		display1('Convert 11 to binary');
-		display2('0b' + userI);
+		if (i == 3){
+			if (userI == "1011")
+				break;
+			display1("Wrong!");
+			display2("try again...");
+			nano_wait(500000000); // 500ms
+			i = 0;
+		}
+		display1('Convert 0d11 to binary');
+		char str [6];
+		strcpy(str, '0b');
+		strcat(str, userI);
+		display2(str);
 		int index = get_key_pressed();
 		key = lookup[index];
+		userI[i] = key;
+		i++;
 	}
-	pos = 0;
+	i = 0;
 	while(key != 'c') {
 		// maybe generate values later...
-		display1('XOR this into 0x47b9 to make 0xffff');
-		display2('0x' + userI);
+		if (i == 3){
+			if (userI == "21")
+				break;
+			display1("Wrong!");
+			display2("try again...");
+			nano_wait(500000000); // 500ms
+			i = 0;
+		}
+		display1('ay whas 9 + 10');
+		char str [6];
+		strcpy(str, '0x');
+		strcat(str, userI);
+		display2(str);
 		int index = get_key_pressed();
 		key = lookup[index];
+		userI[i] = key;
+		i++;
 	}
 }
