@@ -132,6 +132,38 @@ int I2C1_senddata(uint8_t* data, uint32_t size) {
  * 		Blink rate			0x80 | 0x01		Set blinking OFF
  * 		Register dimming	0xE0 | 0x0F		Set brightness to full
  */
+#define ZERO	0x3F
+#define ONE		0x06
+#define TWO 	0x5B
+#define THREE	0x4F
+#define FOUR	0x66
+#define FIVE	0x6D
+#define SIX		0x7D
+#define SEVEN	0x07
+#define EIGHT	0x7F
+#define NINE	0x67
+
+void clear(void){
+	uint8_t data[10] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+	I2C1_start(0x70, 0);
+	I2C1_senddata(data, 10);
+	I2C1_stop();
+}
+
+
+void seg_disp(int min, int sec){
+	int digits[10] = {ZERO, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE};
+	int dig0 = digits[(int)(min/10)];
+	int dig1 = digits[min % 10];
+	int dig2 = digits[(int)(sec/10)];
+	int dig3 = digits[sec % 10];
+
+	uint8_t data[10] = {0x00, dig0, 0x00, dig1, 0x00, 0x02, 0x00, dig2, 0x00, dig3};
+	I2C1_start(0x70, 0);
+	I2C1_senddata(data, 10);
+	I2C1_stop();
+}
+
 int main(void)
 {
 
@@ -145,19 +177,17 @@ int main(void)
 		I2C1_stop();
 	}
 
+	clear();
+	int min = 90;
+	int sec = 54;
+	seg_disp(min, sec);
+	// 0x00 is first, 0x02, ... 0x06, 0x08
 
-	// The sequence commences with the initialisation of the address pointer
-	// by the address pointer command.
-	uint8_t data[8] = {0x00, 0x11, 0x22, 0x03, 0x04, 0x0F, 0xF0, 0xFF};
-	I2C1_start(0x70, 0);
-	I2C1_senddata(data, 8);
-	I2C1_stop();
-
-	uint8_t disp_on[1] = {0x21};
+	/*uint8_t disp_on[1] = {0x21};
 	I2C1_start(0x70, 0);
 	I2C1_senddata(disp_on, 1);
-	I2C1_stop();
-	while(1);
+	I2C1_stop();*/
+	//while(1);
 
 }
 
