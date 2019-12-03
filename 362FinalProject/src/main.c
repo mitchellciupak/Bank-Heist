@@ -6,7 +6,8 @@
 #include "menu.h"
 #include "keypad.h"
 #include "pots.h"
-#include "lcd.h"
+#include"lcd.h"
+#include "seg.h"
 
 const char * msg1;
 const char * msg2;
@@ -14,7 +15,9 @@ const char * msg2;
 int main(void)
 {
 	/*Menu*/
-        //Init LCD Display
+        //Init LCD Display and 7 seg
+		segInit();
+		segClear();
         initDisplay();
 
         //Display initial message
@@ -26,12 +29,12 @@ int main(void)
 		//Find Difficulty
 		int difficultyMode = menuStartupDifficulty();
 
-		//Init Timer and 7-Seg
+		//Init Timer
 		menuInit(difficultyMode);
 
 	/*Challenge 1: Keypad Challenge*/
 	configKeyboard(); //TODO name to keypadInit();
-  
+	  
   // Else return success.
   return SUCCESS;
 }
