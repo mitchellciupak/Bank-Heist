@@ -4,33 +4,44 @@
 #include <stdlib.h>
 
 #include "menu.h"
-#include "keypad.h"
+#include "keyboard.h"
 #include "pots.h"
 #include "lcd.h"
 
 const char * msg1;
 const char * msg2;
+extern int move;
 
 int main(void)
 {
 	/*Menu*/
-        //Init LCD Display
-        initDisplay();
+    //Init LCD Display
+    initDisplay();
+    setup_gpio();
+    setup_timer6();
 
-        //Display initial message
-        msg1 = "Safe Challenge!";
-        msg2 = "(C) to continue";
+    //Display initial message
+    msg1 = "Safe Challenge!";
+    msg2 = "   (C) to continue    ";
+    topDisplayStatic();
+    move = 1;
+    char c = get_char_key();
+    move = 0;
+    if(c == 'C'){
+        msg1 = "Select Difficulty:";
+        msg2 = "         Red(Hard) : Yellow(Med) : Green(Easy)";
         topDisplayStatic();
-        bottomDisplayStatic();
+        move = 1;
+        //bottomDisplayScroll(msg2);
+    }
+    //Find Difficulty
+    int difficultyMode = menuStartupDifficulty();
 
-		//Find Difficulty
-		int difficultyMode = menuStartupDifficulty();
-
-		//Init Timer and 7-Seg
-		menuInit(difficultyMode);
+    //Init Timer and 7-Seg
+    menuInit(difficultyMode);
 
 	/*Challenge 1: Keypad Challenge*/
-	configKeyboard(); //TODO name to keypadInit();
+	//configKeyboard(); //TODO name to keypadInit();
 
 	/*Challenge 2: Pots Challenge*/
 	potsInit();

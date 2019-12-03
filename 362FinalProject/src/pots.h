@@ -42,6 +42,10 @@ void potsInit(void) {
         t++;
         if(x > 1.8 & x < 2.2){
             GPIOA->BSRR |= GPIO_BSRR_BS_1;//0x2;
+            //Play sound
+
+            //Do something to say its been picked correctly
+
         }else{
             GPIOA->BSRR |= GPIO_BSRR_BR_1;//~0X2;
         }
