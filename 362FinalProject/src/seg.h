@@ -1,3 +1,6 @@
+#ifndef SEG_H
+#define SEG_H
+
 #include "stm32f0xx.h"
 #include "stm32f0_discovery.h"
 #include <stdio.h>
@@ -152,8 +155,14 @@ void segInit(void){
 		I2C1_senddata(&setup[i], 1);
 		I2C1_stop();
 	}
+}
 
-	clear();
+void segBlink(void){
+	uint8_t setup[4] = {0x21, 0xA0, 0xEF, 0x83};
+	I2C1_waitidle();
+	I2C1_start(0x70, 0);
+	I2C1_senddata(&setup[3], 1);
+	I2C1_stop();
 }
 
 void segDisp(int min, int sec){
@@ -175,3 +184,5 @@ void segClear(void){
 	I2C1_senddata(data, 10);
 	I2C1_stop();
 }
+
+#endif
