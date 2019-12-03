@@ -27,10 +27,10 @@ int main(void)
         bottomDisplayStatic();
 
 		//Find Difficulty
-		//int difficultyMode = menuStartupDifficulty();
+		int difficultyMode = menuStartupDifficulty();
 
 		//Init Timer
-		menuInit(3);
+		menuInit(difficultyMode);
 
 	/*Challenge 1: Keypad Challenge*/
 	configKeyboard(); //TODO name to keypadInit();
