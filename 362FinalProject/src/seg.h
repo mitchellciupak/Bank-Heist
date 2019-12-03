@@ -175,4 +175,3 @@ void segClear(void){
 	I2C1_senddata(data, 10);
 	I2C1_stop();
 }
-
