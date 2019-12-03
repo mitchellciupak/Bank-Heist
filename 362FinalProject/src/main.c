@@ -31,9 +31,7 @@ int main(void)
 
 	/*Challenge 1: Keypad Challenge*/
 	configKeyboard(); //TODO name to keypadInit();
-
-	/*Challenge 2: Pots Challenge*/
-	potsInit();
-
+  
+  // Else return success.
+  return SUCCESS;
 }
-
