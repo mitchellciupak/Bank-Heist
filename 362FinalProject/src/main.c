@@ -23,7 +23,7 @@ int main(void)
     setup_timer3();
 
     //Display initial message
-    keypadChallenge();
+    keypadChallenge(3);
     move = 0;
 	msg1 = ("Guess you win");
 	msg2 = ("      :(     ");
@@ -49,7 +49,7 @@ int main(void)
     menuInit(difficultyMode);
 
 	/*Challenge 1: Keypad Challenge*/
-    keypadChallenge();
+    keypadChallenge(difficultyMode);
 
 	/*Challenge 2: Pots Challenge*/
 	potsInit();

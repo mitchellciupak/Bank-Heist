@@ -87,11 +87,9 @@ void TIM3_IRQHandler() {
 	GPIOC->ODR = (1 << col);
 }
 
-
-
-void keypadChallenge(void){
+void keyIntro(void){
 	setup_timer3();
-    setup_gpio();
+	setup_gpio();
 	// SCROLL NOTE:
 	//	instead of automatically scrolling
 	//	offset stimulated by user keypad press
@@ -196,7 +194,6 @@ void keypadChallenge(void){
 	mess[10] = '_';
 	send = mess;
 	topDisplayStatic();
-
 	offset = 0;
 	msg1 = "-_-_-_-_-_-_-_-_";
 	msg4 = "          (C) to continue     ";
@@ -226,162 +223,13 @@ void keypadChallenge(void){
 			key = get_char_key();
 		}
 	}
-	char userI [16] = "0x        xor   ";
-	char comp [6] = "0xB846";
-	msg1 = "                     ";
+	move = 0;
+	msg1 = " ";
+	msg2 = " ";
 	topDisplayStatic();
-	// GENERAL THOUGH PROCESSES:
-	//	no back space... just fill up 4 char array and if wrong will have sound to show improper val and will clear
-	int i = 2;
-	int solved = 0;
-	while(!solved) {
-		// maybe generate values later...
-		if (i == 6){
-			if (userI[2] == 'B' & userI[3] == '8' & userI[4] == '4' & userI[5] == '6'){
-				move = 0;
-				msg1 = ("Correct!");
-				msg2 = ("now another...");
-				userI[0] = '0';
-				userI[1] = 'b';
-				userI[2] = ' ';
-				userI[3] = ' ';
-				userI[4] = ' ';
-				userI[5] = ' ';
-				topDisplayStatic();
-				nano_wait(2000000000); // 2000ms 2s
-				solved = 1;
-				break;
-			}
-			else{
-				move = 0;
-				msg1 = ("Wrong!");
-				msg2 = ("try again...");
-				userI[0] = '0';
-				userI[1] = 'x';
-				userI[2] = ' ';
-				userI[3] = ' ';
-				userI[4] = ' ';
-				userI[5] = ' ';
-				topDisplayStatic();
-				nano_wait(2000000000); // 2000ms 2s
-				move = 2;
-			}
-			i = 2;
-		}
-		char * m1 = userI;
-		//display1('XOR this into 0x47b9 to make 0xffff');
-		offset = 0;
-		move = 0;
-		msg1 = m1;
-		msg2 = "0x47b9 = 0xffff";
-		topDisplayStatic();
-		key = get_char_key();
-		userI[i] = key;
-		topDisplayStatic();
-		i++;
-	}
-//	move = 2;
-	i = 2;
-	userI[10] = ' ';
-	userI[11] = ' ';
-	userI[12] = ' ';
-	solved = 0;
-	while(!solved) {
-		// maybe generate values later...
-		if (i == 6){
-					if (userI[2] == '1' & userI[3] == '0' & userI[4] == '1' & userI[5] == '1'){
-						move = 0;
-						msg1 = ("Correct!");
-						msg2 = ("now another...");
-						userI[0] = '0';
-						userI[1] = 'x';
-						userI[2] = ' ';
-						userI[3] = ' ';
-						userI[4] = ' ';
-						userI[5] = ' ';
-						topDisplayStatic();
-						nano_wait(2000000000); // 2000ms 2s
-						solved = 1;
-						break;
-					}
-					else{
-						move = 0;
-						msg1 = ("Wrong!");
-						msg2 = ("try again...");
-						userI[0] = '0';
-						userI[1] = 'b';
-						userI[2] = ' ';
-						userI[3] = ' ';
-						userI[4] = ' ';
-						userI[5] = ' ';
-						topDisplayStatic();
-						nano_wait(2000000000); // 2000ms 2s
-//						move = 2;
-					}
-					i = 2;
-				}
-		char * m1 = userI;
-		//display1('XOR this into 0x47b9 to make 0xffff');
-		offset = 0;
-		msg1 = m1;
-		msg2 = " = 11 in binary     ";
-		topDisplayStatic();
-		key = get_char_key();
-		userI[i] = key;
-		topDisplayStatic();
-		i++;
-	}
-//	move = 2;
-	i = 2;
-	solved = 0;
-	userI[10] = 'N';
-	userI[11] = 'O';
-	userI[12] = 'T';
-	while(!solved) {
-		// maybe generate values later...
-		if (i == 6){
-					if (userI[2] == '3' & userI[3] == 'B' & userI[4] == 'D' & userI[5] == 'A'){
-						move = 0;
-						msg1 = ("Correct!");
-						msg2 = ("");
-						userI[0] = ' ';
-						userI[1] = ' ';
-						userI[2] = ' ';
-						userI[3] = ' ';
-						userI[4] = ' ';
-						userI[5] = ' ';
-						topDisplayStatic();
-						nano_wait(2000000000); // 2000ms 2s
-						solved = 1;
-						break;
-					}
-					else{
-						move = 0;
-						msg1 = ("Wrong!");
-						msg2 = ("try again...");
-						userI[0] = '0';
-						userI[1] = 'b';
-						userI[2] = ' ';
-						userI[3] = ' ';
-						userI[4] = ' ';
-						userI[5] = ' ';
-						topDisplayStatic();
-						nano_wait(2000000000); // 2000ms 2s
-//						move = 2;
-					}
-					i = 2;
-				}
-		char * m1 = userI;
-		//display1('XOR this into 0x47b9 to make 0xffff');
-		offset = 0;
-		msg1 = m1;
-		msg2 = "0xffff = 0xc425";
-		topDisplayStatic();
-		key = get_char_key();
-		userI[i] = key;
-		topDisplayStatic();
-		i++;
-	}
+}
+
+void keypadOutro(void){
 	move = 2;
 	for (int n = 0; n < 7; n++){
 		msg1 = ("You beat me!");
@@ -399,4 +247,415 @@ void keypadChallenge(void){
 		topDisplayStatic();
 		nano_wait(1000000000); // 2000ms 2s
 	}
+}
+
+void keypadChallenge(int diff){
+	keyIntro();
+	char * key = 0;
+	if (diff == 3){
+		char userI [16] = "0x        xor   ";
+		// GENERAL THOUGH PROCESSES:
+		//	no back space... just fill up 4 char array and if wrong will have sound to show improper val and will clear
+		int i = 2;
+		int solved = 0;
+		while(!solved) {
+			// maybe generate values later...
+			if (i == 6){
+				if (userI[2] == 'B' & userI[3] == '8' & userI[4] == '4' & userI[5] == '6'){
+					move = 0;
+					msg1 = ("Correct!");
+					msg2 = ("now another...");
+					topDisplayStatic();
+					userI[0] = '0';
+					userI[1] = 'x';
+					userI[2] = ' ';
+					userI[3] = ' ';
+					userI[4] = ' ';
+					userI[5] = ' ';
+					nano_wait(2000000000); // 2000ms 2s
+					solved = 1;
+					break;
+				}
+				else{
+					move = 0;
+					msg1 = ("Wrong!");
+					msg2 = ("try again...");
+					topDisplayStatic();
+					userI[0] = '0';
+					userI[1] = 'x';
+					userI[2] = ' ';
+					userI[3] = ' ';
+					userI[4] = ' ';
+					userI[5] = ' ';
+					nano_wait(2000000000); // 2000ms 2s
+				}
+				i = 2;
+
+			}
+			char * m1 = userI;
+			//display1('XOR this into 0x47b9 to make 0xffff');
+			offset = 0;
+			move = 0;
+			msg1 = m1;
+			msg2 = "0x47b9 = 0xffff";
+			topDisplayStatic();
+			key = get_char_key();
+			if (key == '#'){
+				if (i > 2){
+					i--;
+					userI[i] = ' ';
+				}
+			}
+			else{
+				userI[i] = key;
+				i++;
+			}
+			topDisplayStatic();
+		}
+		i = 2;
+		solved = 0;
+		userI[10] = 'N';
+		userI[11] = 'O';
+		userI[12] = 'T';
+		while(!solved) {
+			// maybe generate values later...
+			if (i == 6){
+				if (userI[2] == '3' & userI[3] == 'B' & userI[4] == 'D' & userI[5] == 'A'){
+					move = 0;
+					msg1 = ("Correct!");
+					msg2 = ("");
+					userI[0] = ' ';
+					userI[1] = ' ';
+					userI[2] = ' ';
+					userI[3] = ' ';
+					userI[4] = ' ';
+					userI[5] = ' ';
+					topDisplayStatic();
+					nano_wait(2000000000); // 2000ms 2s
+					solved = 1;
+					break;
+				}
+				else{
+					move = 0;
+					msg1 = ("Wrong!");
+					msg2 = ("try again...");
+					userI[0] = '0';
+					userI[1] = 'x';
+					userI[2] = ' ';
+					userI[3] = ' ';
+					userI[4] = ' ';
+					userI[5] = ' ';
+					topDisplayStatic();
+					nano_wait(2000000000); // 2000ms 2s
+//						move = 2;
+				}
+				i = 2;
+			}
+			char * m1 = userI;
+			//display1('XOR this into 0x47b9 to make 0xffff');
+			offset = 0;
+			msg1 = m1;
+			msg2 = "0xffff = 0xc425";
+			topDisplayStatic();
+			key = get_char_key();
+			if (key == '#'){
+				if (i > 2){
+					i--;
+					userI[i] = ' ';
+				}
+			}
+			else{
+				userI[i] = key;
+				i++;
+			}
+			topDisplayStatic();
+		}
+	}
+	else if (diff == 2){
+		char userI [16] = "0b              ";
+		int i = 2;
+		int solved = 0;
+		while(!solved) {
+			// maybe generate values later...
+			if (i == 6){
+				if (userI[2] == '1' & userI[3] == '0' & userI[4] == '1' & userI[5] == '1'){
+					move = 0;
+					msg1 = ("Correct!");
+					msg2 = ("now another...");
+					userI[0] = '0';
+					userI[1] = 'x';
+					userI[2] = ' ';
+					userI[3] = ' ';
+					userI[4] = ' ';
+					userI[5] = ' ';
+					topDisplayStatic();
+					nano_wait(2000000000); // 2000ms 2s
+					solved = 1;
+					break;
+				}
+				else{
+					move = 0;
+					msg1 = ("Wrong!");
+					msg2 = ("try again...");
+					userI[0] = '0';
+					userI[1] = 'b';
+					userI[2] = ' ';
+					userI[3] = ' ';
+					userI[4] = ' ';
+					userI[5] = ' ';
+					topDisplayStatic();
+					nano_wait(2000000000); // 2000ms 2s
+//						move = 2;
+				}
+				i = 2;
+			}
+			char * m1 = userI;
+			//display1('XOR this into 0x47b9 to make 0xffff');
+			offset = 0;
+			msg1 = m1;
+			msg2 = " = 11 in binary     ";
+			topDisplayStatic();
+			key = get_char_key();
+			if (key == '#'){
+				if (i > 2){
+					i--;
+					userI[i] = ' ';
+				}
+			}
+			else{
+				userI[i] = key;
+				i++;
+			}
+			topDisplayStatic();
+		}
+		i = 2;
+		solved = 0;
+		userI[10] = 'N';
+		userI[11] = 'O';
+		userI[12] = 'T';
+		while(!solved) {
+			// maybe generate values later...
+			if (i == 6){
+				if (userI[2] == '3' & userI[3] == 'B' & userI[4] == 'D' & userI[5] == 'A'){
+					move = 0;
+					msg1 = ("Correct!");
+					msg2 = ("");
+					userI[0] = ' ';
+					userI[1] = ' ';
+					userI[2] = ' ';
+					userI[3] = ' ';
+					userI[4] = ' ';
+					userI[5] = ' ';
+					topDisplayStatic();
+					nano_wait(2000000000); // 2000ms 2s
+					solved = 1;
+					break;
+				}
+				else{
+					move = 0;
+					msg1 = ("Wrong!");
+					msg2 = ("try again...");
+					userI[0] = '0';
+					userI[1] = 'x';
+					userI[2] = ' ';
+					userI[3] = ' ';
+					userI[4] = ' ';
+					userI[5] = ' ';
+					topDisplayStatic();
+					nano_wait(2000000000); // 2000ms 2s
+//						move = 2;
+				}
+				i = 2;
+			}
+			char * m1 = userI;
+			//display1('XOR this into 0x47b9 to make 0xffff');
+			offset = 0;
+			msg1 = m1;
+			msg2 = "0xffff = 0xc425";
+			topDisplayStatic();
+			key = get_char_key();
+			if (key == '#'){
+				if (i > 2){
+					i--;
+					userI[i] = ' ';
+				}
+			}
+			else{
+				userI[i] = key;
+				i++;
+			}
+			topDisplayStatic();
+		}
+	}
+	else if (diff == 1){
+		char userI [16] = "0b              ";
+		int i = 2;
+		int solved = 0;
+		while(!solved) {
+			// maybe generate values later...
+			if (i == 6){
+				if (userI[2] == '1' & userI[3] == '0' & userI[4] == '1' & userI[5] == '1'){
+					move = 0;
+					msg1 = ("Correct!");
+					msg2 = ("now another...");
+					userI[0] = '0';
+					userI[1] = 'b';
+					userI[2] = ' ';
+					userI[3] = ' ';
+					userI[4] = ' ';
+					userI[5] = ' ';
+					topDisplayStatic();
+					nano_wait(2000000000); // 2000ms 2s
+					solved = 1;
+					break;
+				}
+				else{
+					move = 0;
+					msg1 = ("Wrong!");
+					msg2 = ("try again...");
+					userI[0] = '0';
+					userI[1] = 'b';
+					userI[2] = ' ';
+					userI[3] = ' ';
+					userI[4] = ' ';
+					userI[5] = ' ';
+					topDisplayStatic();
+					nano_wait(2000000000); // 2000ms 2s
+//						move = 2;
+				}
+				i = 2;
+			}
+			char * m1 = userI;
+			//display1('XOR this into 0x47b9 to make 0xffff');
+			offset = 0;
+			msg1 = m1;
+			msg2 = " = 11 in binary     ";
+			topDisplayStatic();
+			key = get_char_key();
+			if (key == '#'){
+				if (i > 2){
+					i--;
+					userI[i] = ' ';
+				}
+			}
+			else{
+				userI[i] = key;
+				i++;
+			}
+			topDisplayStatic();
+
+		}
+		i = 2;
+		solved = 0;
+		while(!solved) {
+			// maybe generate values later...
+			if (i == 6){
+				if (userI[2] == '1' & userI[3] == '0' & userI[4] == '0' & userI[5] == '1'){
+					move = 0;
+					msg1 = ("Correct!");
+					msg2 = ("now another...");
+					userI[0] = '0';
+					userI[1] = 'b';
+					userI[2] = ' ';
+					userI[3] = ' ';
+					userI[4] = ' ';
+					userI[5] = ' ';
+					topDisplayStatic();
+					nano_wait(2000000000); // 2000ms 2s
+					solved = 1;
+					break;
+				}
+				else{
+					move = 0;
+					msg1 = ("Wrong!");
+					msg2 = ("try again...");
+					userI[0] = '0';
+					userI[1] = 'b';
+					userI[2] = ' ';
+					userI[3] = ' ';
+					userI[4] = ' ';
+					userI[5] = ' ';
+					topDisplayStatic();
+					nano_wait(2000000000); // 2000ms 2s
+//						move = 2;
+				}
+				i = 2;
+			}
+			char * m1 = userI;
+			//display1('XOR this into 0x47b9 to make 0xffff');
+			offset = 0;
+			msg1 = m1;
+			msg2 = " = 9 in binary     ";
+			topDisplayStatic();
+			key = get_char_key();
+			if (key == '#'){
+				if (i > 2){
+					i--;
+					userI[i] = ' ';
+				}
+			}
+			else{
+				userI[i] = key;
+				i++;
+			}
+			topDisplayStatic();
+		}
+		i = 2;
+		solved = 0;
+		while(!solved) {
+			// maybe generate values later...
+			if (i == 6){
+				if (userI[2] == '1' & userI[3] == '1' & userI[4] == '0' & userI[5] == '0'){
+					move = 0;
+					msg1 = ("Correct!");
+					msg2 = (" ");
+					userI[0] = '0';
+					userI[1] = 'b';
+					userI[2] = ' ';
+					userI[3] = ' ';
+					userI[4] = ' ';
+					userI[5] = ' ';
+					topDisplayStatic();
+					nano_wait(2000000000); // 2000ms 2s
+					solved = 1;
+					break;
+				}
+				else{
+					move = 0;
+					msg1 = ("Wrong!");
+					msg2 = ("try again...");
+					userI[0] = '0';
+					userI[1] = 'b';
+					userI[2] = ' ';
+					userI[3] = ' ';
+					userI[4] = ' ';
+					userI[5] = ' ';
+					topDisplayStatic();
+					nano_wait(2000000000); // 2000ms 2s
+//						move = 2;
+				}
+				i = 2;
+			}
+			char * m1 = userI;
+			//display1('XOR this into 0x47b9 to make 0xffff');
+			offset = 0;
+			msg1 = m1;
+			msg2 = " = 12 in binary     ";
+			topDisplayStatic();
+			key = get_char_key();
+			if (key == '#'){
+				if (i > 2){
+					i--;
+					userI[i] = ' ';
+				}
+			}
+			else{
+				userI[i] = key;
+				i++;
+			}
+			topDisplayStatic();
+		}
+	}
+	keypadOutro();
+
 }
