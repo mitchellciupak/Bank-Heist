@@ -27,3 +27,4 @@
 ## Reserved Interrupts/Timers
 ### Timer 2 - Menu Timer
 ### Timer 6 - Keypad Challenge
+### Timer 14 - Display
