@@ -20,19 +20,13 @@ int main(void)
     //Init LCD Display
     initDisplay();
     setup_gpio();
-    setup_timer6();
+    setup_timer3();
 
     //Display initial message
     keypadChallenge();
     move = 0;
 	msg1 = ("Guess you win");
 	msg2 = ("      :(     ");
-	userI[0] = '0';
-	userI[1] = 'b';
-	userI[2] = ' ';
-	userI[3] = ' ';
-	userI[4] = ' ';
-	userI[5] = ' ';
 	topDisplayStatic();
 //    msg1 = "Safe Challenge!";
 //    msg4 = "          (C) to continue     ";

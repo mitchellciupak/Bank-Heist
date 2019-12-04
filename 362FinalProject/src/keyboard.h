@@ -15,6 +15,7 @@ extern const char * msg2;
 extern const char * msg3;
 extern const char * msg4;
 extern int move;
+extern int offset;
 
 void nano_wait(unsigned int n) {
     asm(    "        mov r0,%0\n"
@@ -62,16 +63,16 @@ void setup_gpio() {
 	GPIOC->PUPDR |= 0xaa00;
 }
 
-void setup_timer6() {
-    RCC->APB1ENR |= RCC_APB1ENR_TIM6EN;
-    TIM6->PSC = (240-1);
-    TIM6->ARR = (200-1);
-    TIM6->DIER |= TIM_DIER_UIE;
-    NVIC->ISER[0] = 1<<TIM6_DAC_IRQn;
-    TIM6->CR1 |= TIM_CR1_CEN;
+void setup_timer3() {
+    RCC->APB1ENR |= RCC_APB1ENR_TIM3EN;
+    TIM3->PSC = (240-1);
+    TIM3->ARR = (200-1);
+    TIM3->DIER |= TIM_DIER_UIE;
+    NVIC->ISER[0] = 1<<TIM3_IRQn;
+    TIM3->CR1 |= TIM_CR1_CEN;
 }
-void TIM6_DAC_IRQHandler() {
-	TIM6->SR &= ~TIM_SR_UIF;
+void TIM3_IRQHandler() {
+	TIM3->SR &= ~TIM_SR_UIF;
 	int row = (GPIOC->IDR >> 4) & 0xf;
 	int index = col << 2;
 	for (int i = 0; i < 4; i++){
@@ -89,13 +90,114 @@ void TIM6_DAC_IRQHandler() {
 
 
 void keypadChallenge(void){
-	setup_timer6();
+	setup_timer3();
     setup_gpio();
 	// SCROLL NOTE:
 	//	instead of automatically scrolling
 	//	offset stimulated by user keypad press
 	//	for the sake of program flow
 	char * key = 0;
+	char mess [26];
+	for (int i = 0; i < 26; i++){
+		mess[i] = ' ';
+	}
+	move = 0;
+	char * send = mess;
+	msg1 = send;
+	msg2 = ("");
+	topDisplayStatic();
+	nano_wait(1000000000); // 2000ms 2s
+	mess[0] = ' ';
+	send = mess;
+	topDisplayStatic();
+	nano_wait(500000000);
+	mess[0] = '_';
+	send = mess;
+	topDisplayStatic();
+	nano_wait(500000000);
+	mess[0] = ' ';
+	send = mess;
+	topDisplayStatic();
+	nano_wait(500000000);
+	mess[0] = '_';
+	send = mess;
+	topDisplayStatic();
+	nano_wait(500000000);
+	mess[0] = 'c';
+	mess[1] = '_';
+	send = mess;
+	topDisplayStatic();
+	nano_wait(150000000);
+	mess[1] = 'h';
+	mess[2] = '_';
+	send = mess;
+	topDisplayStatic();
+	nano_wait(150000000);
+	mess[2] = 'a';
+	mess[3] = '_';
+	send = mess;
+	topDisplayStatic();
+	nano_wait(150000000);
+	mess[3] = 'l';
+	mess[4] = '_';
+	send = mess;
+	topDisplayStatic();
+	nano_wait(150000000);
+	mess[4] = 'l';
+	mess[5] = '_';
+	send = mess;
+	topDisplayStatic();
+	nano_wait(150000000);
+	mess[5] = 'e';
+	mess[6] = '_';
+	send = mess;
+	topDisplayStatic();
+	nano_wait(150000000);
+	mess[6] = 'n';
+	mess[7] = '_';
+	send = mess;
+	topDisplayStatic();
+	nano_wait(150000000);
+	mess[7] = 'g';
+	mess[8] = '_';
+	send = mess;
+	topDisplayStatic();
+	nano_wait(150000000);
+	mess[8] = 'e';
+	mess[9] = '_';
+	send = mess;
+	topDisplayStatic();
+	nano_wait(150000000);
+	mess[9] = '2';
+	mess[10] = '_';
+	send = mess;
+	topDisplayStatic();
+	nano_wait(100000000);
+	mess[10] = ' ';
+	send = mess;
+	topDisplayStatic();
+	nano_wait(500000000);
+	mess[10] = '_';
+	send = mess;
+	topDisplayStatic();
+	nano_wait(500000000);
+	mess[10] = ' ';
+	send = mess;
+	topDisplayStatic();
+	nano_wait(500000000);
+	mess[10] = '_';
+	send = mess;
+	topDisplayStatic();
+	nano_wait(500000000);
+	mess[10] = ' ';
+	send = mess;
+	topDisplayStatic();
+	nano_wait(500000000);
+	mess[10] = '_';
+	send = mess;
+	topDisplayStatic();
+
+	offset = 0;
 	msg1 = "-_-_-_-_-_-_-_-_";
 	msg4 = "          (C) to continue     ";
 	msg2 = "        Dare to crack me?          ";
@@ -103,26 +205,31 @@ void keypadChallenge(void){
 	move = 2;
 
 	key = get_char_key();
-	if(key == 'C') {
-		//display1('This part of the security system requires you enter values into the keypad');
-		//display2('Press c to continue');
-		msg1 = "-_-_-_-_-_-_-_-_";
-		msg4 = "          (C) to continue     ";
-		msg2 = "        this is the keypad challenge       ";
-		topDisplayStatic();
-		key = get_char_key();
+	int display = 1;
+	nano_wait(400000000000);
+	while (display){
+		if(key == 'C') {
+			//display1('This part of the security system requires you enter values into the keypad');
+			//display2('Press c to continue');
+			offset = 0;
+			for (int i = 0; i < 10; i++){
+				msg1 = "-_-_-_-_-_-_-_-_";
+				msg4 = "       you must convert and enter values      ";
+				msg2 = "        this is the conversion challenge       ";
+				topDisplayStatic();
+				nano_wait(400000000000);
+			}
+			display = 0;
+
+		}
+		else {
+			key = get_char_key();
+		}
 	}
-	if(key == 'C') {
-		//display1('Once you continue from here, the timer will start');
-		//display2('Press c to continue');
-		msg1 = "-_-_-_-_-_-_-_-_";
-		msg4 = "          (C) to continue     ";
-		msg2 = "       you must convert and enter values      ";
-		topDisplayStatic();
-		key = get_char_key();
-	}
-	char userI [6] = "0x    ";
+	char userI [16] = "0x        xor   ";
 	char comp [6] = "0xB846";
+	msg1 = "                     ";
+	topDisplayStatic();
 	// GENERAL THOUGH PROCESSES:
 	//	no back space... just fill up 4 char array and if wrong will have sound to show improper val and will clear
 	int i = 2;
@@ -163,17 +270,21 @@ void keypadChallenge(void){
 		}
 		char * m1 = userI;
 		//display1('XOR this into 0x47b9 to make 0xffff');
+		offset = 0;
+		move = 0;
 		msg1 = m1;
-		msg4 = "      XOR this into 0x47b9 to make 0xffff     ";
-		msg2 = "      XOR this into 0x47b9 to make 0xffff     ";
+		msg2 = "0x47b9 = 0xffff";
 		topDisplayStatic();
 		key = get_char_key();
 		userI[i] = key;
 		topDisplayStatic();
 		i++;
 	}
-	move = 2;
+//	move = 2;
 	i = 2;
+	userI[10] = ' ';
+	userI[11] = ' ';
+	userI[12] = ' ';
 	solved = 0;
 	while(!solved) {
 		// maybe generate values later...
@@ -181,9 +292,9 @@ void keypadChallenge(void){
 					if (userI[2] == '1' & userI[3] == '0' & userI[4] == '1' & userI[5] == '1'){
 						move = 0;
 						msg1 = ("Correct!");
-						msg2 = ("");
+						msg2 = ("now another...");
 						userI[0] = '0';
-						userI[1] = 'b';
+						userI[1] = 'x';
 						userI[2] = ' ';
 						userI[3] = ' ';
 						userI[4] = ' ';
@@ -205,15 +316,66 @@ void keypadChallenge(void){
 						userI[5] = ' ';
 						topDisplayStatic();
 						nano_wait(2000000000); // 2000ms 2s
-						move = 2;
+//						move = 2;
 					}
 					i = 2;
 				}
 		char * m1 = userI;
 		//display1('XOR this into 0x47b9 to make 0xffff');
+		offset = 0;
 		msg1 = m1;
-		msg4 = "      What is 11 in binary     ";
-		msg2 = "      What is 11 in binary     ";
+		msg2 = " = 11 in binary     ";
+		topDisplayStatic();
+		key = get_char_key();
+		userI[i] = key;
+		topDisplayStatic();
+		i++;
+	}
+//	move = 2;
+	i = 2;
+	solved = 0;
+	userI[10] = 'N';
+	userI[11] = 'O';
+	userI[12] = 'T';
+	while(!solved) {
+		// maybe generate values later...
+		if (i == 6){
+					if (userI[2] == '3' & userI[3] == 'B' & userI[4] == 'D' & userI[5] == 'A'){
+						move = 0;
+						msg1 = ("Correct!");
+						msg2 = ("");
+						userI[0] = ' ';
+						userI[1] = ' ';
+						userI[2] = ' ';
+						userI[3] = ' ';
+						userI[4] = ' ';
+						userI[5] = ' ';
+						topDisplayStatic();
+						nano_wait(2000000000); // 2000ms 2s
+						solved = 1;
+						break;
+					}
+					else{
+						move = 0;
+						msg1 = ("Wrong!");
+						msg2 = ("try again...");
+						userI[0] = '0';
+						userI[1] = 'b';
+						userI[2] = ' ';
+						userI[3] = ' ';
+						userI[4] = ' ';
+						userI[5] = ' ';
+						topDisplayStatic();
+						nano_wait(2000000000); // 2000ms 2s
+//						move = 2;
+					}
+					i = 2;
+				}
+		char * m1 = userI;
+		//display1('XOR this into 0x47b9 to make 0xffff');
+		offset = 0;
+		msg1 = m1;
+		msg2 = "0xffff = 0xc425";
 		topDisplayStatic();
 		key = get_char_key();
 		userI[i] = key;
@@ -223,6 +385,7 @@ void keypadChallenge(void){
 	move = 2;
 	for (int n = 0; n < 7; n++){
 		msg1 = ("You beat me!");
+		offset = 0;
 		msg2 = ("-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_");
 		msg4 = ("-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_");
 		topDisplayStatic();
@@ -230,6 +393,7 @@ void keypadChallenge(void){
 	}
 	for (int n = 0; n < 7; n++){
 		msg1 = ("Now the next...");
+		offset = 0;
 		msg2 = ("-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_");
 		msg4 = ("-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_");
 		topDisplayStatic();
