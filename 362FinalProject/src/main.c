@@ -28,16 +28,16 @@ int main(void)
     msg2 = "        Main Menu:            ";
     topDisplayStatic();
     move = 2;
-    //char c = get_char_key();
-    /*
+    char c = get_char_key();
+
     if(c == 'C'){
-        msg1 = "Select Difficulty:";
+        msg1 = "SelectDifficulty:";
         msg2 = "   Red(Hard) : Yellow(Med) : Green(Easy)";
         msg4 = "          Pull Wire to Continue  ";
         topDisplayStatic();
-    }*/
+    }
     //Find Difficulty
-    //int difficultyMode = menuStartupDifficulty();
+    int difficultyMode = menuStartupDifficulty();
 
     //Init Timer and 7-Seg
     //menuInit(difficultyMode);
