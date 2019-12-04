@@ -25,9 +25,8 @@ int SEC = 0;
 void menuSetupGPIO() {
 	//enable the clock to GPIOA
 	RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
-	//Set PA0 to PA2 to Input and PA3 to Output (01000000)
-	GPIOA->MODER &= ~0x8f;
-	GPIOA->MODER |= 0x40;
+	//Set PA0 to PA2 to Input
+	GPIOA->MODER &= ~0x3f;
 }
 
 /*
