@@ -44,6 +44,8 @@ uint16_t dispmem[34] = {
 
 extern const char * msg1;
 extern const char * msg2;
+extern const char * msg3;
+extern const char * msg4;
 int move = 0;
 
 void initDisplay(){
@@ -55,7 +57,7 @@ void initDisplay(){
     // Initialize the display.
     RCC->APB1ENR |= RCC_APB1ENR_TIM14EN;
     TIM14->PSC = 4799;
-    TIM14->ARR = 9;
+    TIM14->ARR = 999;
     TIM14->DIER |= TIM_DIER_UIE;
     NVIC->ISER[0] = 1<<(TIM14_IRQn);
     TIM14->CR1 |= TIM_CR1_CEN;
@@ -64,15 +66,8 @@ void initDisplay(){
 }
 
 void TIM14_IRQHandler(){
-
     TIM14->SR &= ~TIM_SR_UIF;
-    if (move == 1) {
-        display2(&msg2[offset]);
-        //nano_wait(100000000);
-        offset += 1;
-        if (offset == 32)
-            offset = 0;
-    }
+    bottomDisplayScroll(msg2);
 }
 
 void topDisplayStatic(){
@@ -91,14 +86,32 @@ void topDisplayScroll(const char *msg){
 }
 
 void bottomDisplayScroll(const char *msg){
-    int offset1 = 0;
-    while(1){
-        display2(&msg[offset1]);
-        nano_wait(100000000);
-        offset1 += 1;
-        if (offset1 == 32)
-            offset1 = 0;
+    //nano_wait(100000000);
+    if(move == 1){
+        if(offset < 30){
+            display2(&msg[offset]);
+        }else if(offset < 32){
+            display2(&msg3[offset-24]);
+        }
+        offset += 1;
+        if (offset == 32)
+            offset = 0;
+    }else if(move == 0){
+        display2(&msg[offset]);
+        offset = 0;
+    }else if(move == 2){
+        if(offset < 30){
+            display2(&msg[offset]);
+        }else if(offset < 32){
+            display2(&msg3[offset-24]);
+        }else if(offset < 60){
+            display2(&msg4[offset-32]);
+        }
+        offset += 1;
+        if (offset == 60)
+            offset = 0;
     }
+
 }
 
 void bottomDisplayStatic(){

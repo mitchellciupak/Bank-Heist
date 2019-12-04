@@ -10,6 +10,8 @@
 
 const char * msg1;
 const char * msg2;
+const char * msg3 = "                    "; ;
+const char * msg4;
 extern int move;
 
 int main(void)
@@ -22,9 +24,10 @@ int main(void)
 
     //Display initial message
     msg1 = "Safe Challenge!";
-    msg2 = "   (C) to continue    ";
+    msg4 = "          (C) to continue     ";
+    msg2 = "        Main Menu:            ";
     topDisplayStatic();
-    move = 1;
+    move = 2;
     char c = get_char_key();
     move = 0;
     if(c == 'C'){
