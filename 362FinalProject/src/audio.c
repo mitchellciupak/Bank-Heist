@@ -52,44 +52,44 @@ void setup_timer6() {
     NVIC->ISER[0] = 1<<TIM6_DAC_IRQn;
 }
 
-float calc_note(int val){
-	float note = 0;
-	if(val == 128){
+int calc_note(int val){
+	int note = 0;
+	if(val & (1<<7)){
 		note = B3;
 	}
-	if(val == 64){
+	if(val & (1<<6)){
 		note = D4;
 	}
-	if(val == 32){
+	if(val & (1<<5)){
 		note = E4;
 	}
-	if(val == 16){
+	if(val & (1<<4)){
 		note = F4_s;
 	}
-	if(val == 8){
+	if(val & (1<<3)){
 		note = G4;
 	}
-	if(val == 4){
+	if(val & (1<<2)){
 		note = A4;
 	}
-	if(val == 2){
+	if(val & (1<<1)){
 		note = B4;
 	}
-	if(val == 1){
+	if(val & (1<<0)){
 		note = C5;
 	}
 	return note;
 }
 
 void pirateAudio(){
-    float note;
+    float note = 0;
     int val;
     int sep = 1000;
     if(beat_idx == 20 && refrain_idx == 1) sep = 0;
     if(count < COUNT - sep){
     	val = pirates[refrain_idx][beat_idx];
     	note = calc_note(val);
-    	step = (note * 4)* N / (RATE) * (1<<16);
+    	step = (note)* N / (RATE) * (1<<16);
     }
     else{
     	step = 0;
