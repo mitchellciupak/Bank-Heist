@@ -61,8 +61,6 @@ int menuStartupDifficulty() {
 		difficulty = 3;
 	}
 
-	//Turn On LED //TODO CHANGE TO START TIMER
-	GPIOA->ODR = 0b1000; //PA3
 
 	return difficulty;
 }
