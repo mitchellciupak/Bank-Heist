@@ -29,13 +29,11 @@ int main(void)
     topDisplayStatic();
     move = 2;
     char c = get_char_key();
-    move = 0;
     if(c == 'C'){
         msg1 = "Select Difficulty:";
-        msg2 = "         Red(Hard) : Yellow(Med) : Green(Easy)";
+        msg2 = "   Red(Hard) : Yellow(Med) : Green(Easy)";
+        msg4 = "          Pull Wire to Continue  ";
         topDisplayStatic();
-        move = 1;
-        //bottomDisplayScroll(msg2);
     }
     //Find Difficulty
     int difficultyMode = menuStartupDifficulty();

@@ -3,6 +3,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+extern const char * msg1;
+extern const char * msg2;
+extern const char * msg3;
+extern const char * msg4;
+extern int move;
 
 /*
  * Function:  potsInit(void)
@@ -32,22 +37,32 @@ void potsInit(void) {
     while(ADC1->CR & ADC_CR_ADSTART);
     float * array[10];
     int t = 0;
-    while(1){
-        ADC1->CHSELR = 0;
-        ADC1->CHSELR |= ADC_CHSELR_CHSEL0;
-        while(!(ADC1->ISR & ADC_ISR_ADRDY));
-        ADC1->CR |= ADC_CR_ADSTART;
-        while(!(ADC1->ISR & ADC_ISR_EOC));
-        float x = ADC1->DR * 3/4095.0;
-        t++;
-        if(x > 1.8 & x < 2.2){
-            GPIOA->BSRR |= GPIO_BSRR_BS_1;//0x2;
-            //Play sound
 
-            //Do something to say its been picked correctly
+    msg1 = "Lock Challenge:";
+    msg4 = "          (C) to continue     ";
+    move = 1;
+    char c = get_char_key();
+    int lock = 0;
+    if(c == 'C'){
+        while(lock == 0){
+            ADC1->CHSELR = 0;
+            ADC1->CHSELR |= ADC_CHSELR_CHSEL0;
+            while(!(ADC1->ISR & ADC_ISR_ADRDY));
+            ADC1->CR |= ADC_CR_ADSTART;
+            while(!(ADC1->ISR & ADC_ISR_EOC));
+            float x = ADC1->DR * 3/4095.0;
+            t++;
+            if(x > 1.8 && x < 2.2){
+                GPIOA->BSRR |= GPIO_BSRR_BS_1;//0x2;
+                //Play sound
 
-        }else{
-            GPIOA->BSRR |= GPIO_BSRR_BR_1;//~0X2;
+                //Do something to say its been picked correctly
+                lock = 1;
+
+            }else{
+                GPIOA->BSRR |= GPIO_BSRR_BR_1;//~0X2;
+            }
         }
+
     }
 } 

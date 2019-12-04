@@ -4,7 +4,11 @@
 #include <stdio.h>
 #include <string.h>
 
-
+extern const char * msg1;
+extern const char * msg2;
+extern const char * msg3;
+extern const char * msg4;
+extern int move;
 
 int8_t history[16] = {0};
 int8_t lookup[16] = {1,4,7,0xe,2,5,8,0,3,6,9,0xf,0xa,0xb,0xc,0xd};
@@ -65,6 +69,7 @@ void setup_timer6() {
     NVIC->ISER[0] = 1<<TIM6_DAC_IRQn;
     TIM6->CR1 |= TIM_CR1_CEN;
 }
+
 void TIM6_DAC_IRQHandler() {
 	TIM6->SR &= ~TIM_SR_UIF;
 	int row = (GPIOC->IDR >> 4) & 0xf;
@@ -81,8 +86,6 @@ void TIM6_DAC_IRQHandler() {
 	GPIOC->ODR = (1 << col);
 }
 
-
-
 void keypadChallenge(void){
 	setup_timer6();
     setup_gpio();
@@ -90,31 +93,31 @@ void keypadChallenge(void){
 	//	instead of automatically scrolling
 	//	offset stimulated by user keypad press
 	//	for the sake of program flow
-	int key = 0;
-	while(key != 'c') {
-		//display1('I see you want to crack this safe');
+	char key = NULL;
+	while(key != 'C') {
+		msg1 = "Keypad Challenge!";
+		msg2 = "Press (C) to continue";
+		move = 0;
+	    //display1('I see you want to crack this safe');
 		//display2('Press c to continue');
-		int index = get_key_pressed();
-		key = lookup[index];
+		key = get_char_key();
 	}
 	while(key != 'c') {
 		//display1('This part of the security system requires you enter values into the keypad');
 		//display2('Press c to continue');
-		int index = get_key_pressed();
-		key = lookup[index];
+        key = get_char_key();
 	}
 	while(key != 'c') {
 		//display1('Once you continue from here, the timer will start');
 		//display2('Press c to continue');
-		int index = get_key_pressed();
-		key = lookup[index];
+        key = get_char_key();
 	}
 	char userI[4];
 
 	// GENERAL THOUGH PROCESSES:
 	//	no back space... just fill up 4 char array and if wrong will have sound to show improper val and will clear
 	int i = 0;
-	while(key != 'c') {
+	while(key != 'C') {
 		// maybe generate values later...
 		if (i == 4){
 			if (userI == "b846")
@@ -129,8 +132,8 @@ void keypadChallenge(void){
 		strcpy(str, '0x');
 		strcat(str, userI);
 		//display2(str);
-		int index = get_key_pressed();
-		key = lookup[index];
+        key = get_char_key();
+
 		userI[i] = key;
 		i++;
 	}
@@ -150,8 +153,8 @@ void keypadChallenge(void){
 		strcpy(str, '0b');
 		strcat(str, userI);
 		//display2(str);
-		int index = get_key_pressed();
-		key = lookup[index];
+        key = get_char_key();
+
 		userI[i] = key;
 		i++;
 	}
@@ -161,8 +164,9 @@ void keypadChallenge(void){
 		if (i == 3){
 			if (userI == "0021")
 				break;
-			//display1("Wrong!");
-			//display2("try again...");
+			msg1 = "Wrong!";
+			msg2 = "Try Again...";
+			move = 0;
 			nano_wait(500000000); // 500ms
 			i = 0;
 		}
@@ -171,8 +175,8 @@ void keypadChallenge(void){
 		strcpy(str, '0x');
 		strcat(str, userI);
 		//display2(str);
-		int index = get_key_pressed();
-		key = lookup[index];
+        key = get_char_key();
+
 		userI[i] = key;
 		i++;
 	}

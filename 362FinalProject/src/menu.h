@@ -26,7 +26,7 @@ void menuSetupGPIO() {
 	//enable the clock to GPIOA
 	RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
 	//Set PA0 to PA2 to Input and PA3 to Output (01000000)
-	GPIOA->MODER &= ~0x40;
+	GPIOA->MODER &= ~0x8f;
 	GPIOA->MODER |= 0x40;
 }
 
@@ -45,14 +45,17 @@ int menuStartupDifficulty() {
 
 	menuSetupGPIO();
 
-	//Wait for wire to be pulled
-	while(!(GPIOA->IDR & GPIO_IDR_0) & !(GPIOA->IDR & GPIO_IDR_0) & !(GPIOA->IDR & GPIO_IDR_0));
+	//Wait for wire to plugged in
+	//while(!(GPIOA->IDR & GPIO_IDR_0) & !(GPIOA->IDR & GPIO_IDR_0) & !(GPIOA->IDR & GPIO_IDR_0));
+
+	//Wait for a wire to be pulled from power
+	while((GPIOA->IDR & GPIO_IDR_0) && (GPIOA->IDR & GPIO_IDR_0) && (GPIOA->IDR & GPIO_IDR_0));
 
 	//Select Difficulty Based on Wire Pulled
-	if((GPIOA->IDR & GPIO_IDR_0) == GPIO_IDR_0){ //Hard
+	if(!(GPIOA->IDR & GPIO_IDR_0)){//Hard
 		difficulty = 1;
 	}
-	else if((GPIOA->IDR & GPIO_IDR_1) == GPIO_IDR_1){ //Medium
+	else if(!(GPIOA->IDR & GPIO_IDR_1)){ //Medium
 		difficulty = 2;
 	}
 	else{ //Easy
