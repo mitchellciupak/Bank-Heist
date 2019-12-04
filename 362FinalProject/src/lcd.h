@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
 #define SPI_DELAY 1337
 
 // Extern declarations of function pointers in main.c.
@@ -11,7 +12,6 @@ void (*data)(char b) = 0;
 void (*display1)(const char *);
 void (*display2)(const char *);
 
-void nano_wait(unsigned int);
 void generic_lcd_startup(void);
 
 void CMD(char);
@@ -29,6 +29,7 @@ void bottomDisplayStatic();
 
 void (*display1)(const char *) = 0;
 void (*display2)(const char *) = 0;
+int offset = 0;
 
 // This array will be used with dma_display1() and dma_display2() to mix
 // commands that set the cursor location at zero and 64 with characters.
@@ -43,14 +44,30 @@ uint16_t dispmem[34] = {
 
 extern const char * msg1;
 extern const char * msg2;
+extern const char * msg3;
+extern const char * msg4;
+int move = 0;
 
 void initDisplay(){
     cmd = CMD;
     data = Data_func;
     display1 = nondma_display1;
     display2 = nondma_display2;
+
     // Initialize the display.
+    RCC->APB1ENR |= RCC_APB1ENR_TIM14EN;
+    TIM14->PSC = 4799;
+    TIM14->ARR = 999;
+    TIM14->DIER |= TIM_DIER_UIE;
+    NVIC->ISER[0] = 1<<(TIM14_IRQn);
+    TIM14->CR1 |= TIM_CR1_CEN;
+
     init_lcd();
+}
+
+void TIM14_IRQHandler(){
+    TIM14->SR &= ~TIM_SR_UIF;
+    bottomDisplayScroll(msg2);
 }
 
 void topDisplayStatic(){
@@ -58,25 +75,43 @@ void topDisplayStatic(){
 }
 
 void topDisplayScroll(const char *msg){
-    int offset = 0;
+    int offset1 = 0;
     while(1){
         display1(&msg[offset]);
         nano_wait(100000000);
-        offset += 1;
-        if (offset == 32)
-            offset = 0;
+        offset1 += 1;
+        if (offset1 == 32)
+            offset1 = 0;
     }
 }
 
 void bottomDisplayScroll(const char *msg){
-    int offset = 0;
-    while(1){
-        display2(&msg[offset]);
-        nano_wait(100000000);
+    //nano_wait(100000000);
+    if(move == 1){
+        if(offset < 30){
+            display2(&msg[offset]);
+        }else if(offset < 32){
+            display2(&msg3[offset-24]);
+        }
         offset += 1;
         if (offset == 32)
             offset = 0;
+    }else if(move == 0){
+        display2(&msg[offset]);
+        offset = 0;
+    }else if(move == 2){
+        if(offset < 30){
+            display2(&msg[offset]);
+        }else if(offset < 32){
+            display2(&msg3[offset-24]);
+        }else if(offset < 60){
+            display2(&msg4[offset-32]);
+        }
+        offset += 1;
+        if (offset == 60)
+            offset = 0;
     }
+
 }
 
 void bottomDisplayStatic(){
@@ -173,11 +208,6 @@ void init_lcd(void) {
     generic_lcd_startup();
 }
 
-void nano_wait(unsigned int n) {
-    asm(    "        mov r0,%0\n"
-            "repeat: sub r0,#83\n"
-            "        bgt repeat\n" : : "r"(n) : "r0", "cc");
-}
 
 void generic_lcd_startup(void) {
     nano_wait(100000000); // Give it 100ms to initialize

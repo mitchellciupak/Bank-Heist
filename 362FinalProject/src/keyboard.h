@@ -2,6 +2,9 @@
 #include "stm32f0_discovery.h"
 #include <stdint.h>
 #include <stdio.h>
+#include <string.h>
+
+
 
 int8_t history[16] = {0};
 int8_t lookup[16] = {1,4,7,0xe,2,5,8,0,3,6,9,0xf,0xa,0xb,0xc,0xd};
@@ -14,16 +17,6 @@ void nano_wait(unsigned int n) {
             "        bgt repeat\n" : : "r"(n) : "r0", "cc");
 }
 
-int get_key_pressed() {
-	int key = get_key_press();
-	while(key != get_key_release());
-	return key;
-}
-
-char get_char_key() {
-	int index = get_key_pressed();
-	return char_lookup[index];
-}
 
 int get_key_press() {
 	while(1){
@@ -42,6 +35,17 @@ int get_key_release() {
 				}
 			}
 		}
+}
+
+int get_key_pressed() {
+    int key = get_key_press();
+    while(key != get_key_release());
+    return key;
+}
+
+char get_char_key() {
+    int index = get_key_pressed();
+    return char_lookup[index];
 }
 
 void setup_gpio() {
@@ -75,7 +79,6 @@ void TIM6_DAC_IRQHandler() {
 		col = 0;
 	}
 	GPIOC->ODR = (1 << col);
-
 }
 
 
@@ -89,24 +92,23 @@ void keypadChallenge(void){
 	//	for the sake of program flow
 	int key = 0;
 	while(key != 'c') {
-		display1('I see you want to crack this safe');
-		display2('Press c to continue');
+		//display1('I see you want to crack this safe');
+		//display2('Press c to continue');
 		int index = get_key_pressed();
 		key = lookup[index];
 	}
 	while(key != 'c') {
-		display1('This part of the security system requires you enter values into the keypad');
-		display2('Press c to continue');
+		//display1('This part of the security system requires you enter values into the keypad');
+		//display2('Press c to continue');
 		int index = get_key_pressed();
 		key = lookup[index];
 	}
 	while(key != 'c') {
-		display1('Once you continue from here, the timer will start');
-		display2('Press c to continue');
+		//display1('Once you continue from here, the timer will start');
+		//display2('Press c to continue');
 		int index = get_key_pressed();
 		key = lookup[index];
 	}
-	int pos = 0;
 	char userI[4];
 
 	// GENERAL THOUGH PROCESSES:
@@ -117,16 +119,16 @@ void keypadChallenge(void){
 		if (i == 4){
 			if (userI == "b846")
 				break;
-			display1("Wrong!");
-			display2("try again...");
+			//display1("Wrong!");
+			//display2("try again...");
 			nano_wait(500000000); // 500ms
 			i = 0;
 		}
-		display1('XOR this into 0x47b9 to make 0xffff');
+		//display1('XOR this into 0x47b9 to make 0xffff');
 		char str [6];
 		strcpy(str, '0x');
 		strcat(str, userI);
-		display2(str);
+		//display2(str);
 		int index = get_key_pressed();
 		key = lookup[index];
 		userI[i] = key;
@@ -138,16 +140,16 @@ void keypadChallenge(void){
 		if (i == 3){
 			if (userI == "1011")
 				break;
-			display1("Wrong!");
-			display2("try again...");
+			//display1("Wrong!");
+			//display2("try again...");
 			nano_wait(500000000); // 500ms
 			i = 0;
 		}
-		display1('Convert 0d11 to binary');
+		//display1('Convert 0d11 to binary');
 		char str [6];
 		strcpy(str, '0b');
 		strcat(str, userI);
-		display2(str);
+		//display2(str);
 		int index = get_key_pressed();
 		key = lookup[index];
 		userI[i] = key;
@@ -157,18 +159,18 @@ void keypadChallenge(void){
 	while(key != 'c') {
 		// maybe generate values later...
 		if (i == 3){
-			if (userI == "21")
+			if (userI == "0021")
 				break;
-			display1("Wrong!");
-			display2("try again...");
+			//display1("Wrong!");
+			//display2("try again...");
 			nano_wait(500000000); // 500ms
 			i = 0;
 		}
-		display1('ay whas 9 + 10');
+		//display1('ay whas 9 + 10');
 		char str [6];
 		strcpy(str, '0x');
 		strcat(str, userI);
-		display2(str);
+		//display2(str);
 		int index = get_key_pressed();
 		key = lookup[index];
 		userI[i] = key;
