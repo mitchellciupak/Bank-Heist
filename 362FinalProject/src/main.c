@@ -21,6 +21,7 @@ int main(void)
     initDisplay();
     setup_gpio();
     setup_timer6();
+    segInit();
 
     //Display initial message
     msg1 = "Safe Challenge!";
