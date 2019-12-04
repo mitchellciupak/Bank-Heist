@@ -23,20 +23,31 @@ int main(void)
     setup_timer6();
 
     //Display initial message
-    msg1 = "Safe Challenge!";
-    msg4 = "          (C) to continue     ";
-    msg2 = "        Main Menu:            ";
-    topDisplayStatic();
-    move = 2;
-    char c = get_char_key();
+    keypadChallenge();
     move = 0;
-    if(c == 'C'){
-        msg1 = "Select Difficulty:";
-        msg2 = "         Red(Hard) : Yellow(Med) : Green(Easy)";
-        topDisplayStatic();
-        move = 1;
-        //bottomDisplayScroll(msg2);
-    }
+	msg1 = ("Guess you win");
+	msg2 = ("      :(     ");
+	userI[0] = '0';
+	userI[1] = 'b';
+	userI[2] = ' ';
+	userI[3] = ' ';
+	userI[4] = ' ';
+	userI[5] = ' ';
+	topDisplayStatic();
+//    msg1 = "Safe Challenge!";
+//    msg4 = "          (C) to continue     ";
+//    msg2 = "        Main Menu:            ";
+//    topDisplayStatic();
+//    move = 2;
+//    char c = get_char_key();
+//    move = 0;
+//    if(c == 'C'){
+//        msg1 = "Select Difficulty:";
+//        msg2 = "         Red(Hard) : Yellow(Med) : Green(Easy)";
+//        topDisplayStatic();
+//        move = 1;
+//        //bottomDisplayScroll(msg2);
+//    }
     //Find Difficulty
     int difficultyMode = menuStartupDifficulty();
 
@@ -44,7 +55,7 @@ int main(void)
     menuInit(difficultyMode);
 
 	/*Challenge 1: Keypad Challenge*/
-	//configKeyboard(); //TODO name to keypadInit();
+    keypadChallenge();
 
 	/*Challenge 2: Pots Challenge*/
 	potsInit();

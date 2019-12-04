@@ -10,6 +10,11 @@ int8_t history[16] = {0};
 int8_t lookup[16] = {1,4,7,0xe,2,5,8,0,3,6,9,0xf,0xa,0xb,0xc,0xd};
 char char_lookup[16] = {'1','4','7','*','2','5','8','0','3','6','9','#','A','B','C','D'};
 int col = 0;
+extern const char * msg1;
+extern const char * msg2;
+extern const char * msg3;
+extern const char * msg4;
+extern int move;
 
 void nano_wait(unsigned int n) {
     asm(    "        mov r0,%0\n"
@@ -90,90 +95,144 @@ void keypadChallenge(void){
 	//	instead of automatically scrolling
 	//	offset stimulated by user keypad press
 	//	for the sake of program flow
-	int key = 0;
-	while(key != 'c') {
-		//display1('I see you want to crack this safe');
-		//display2('Press c to continue');
-		int index = get_key_pressed();
-		key = lookup[index];
-	}
-	while(key != 'c') {
+	char * key = 0;
+	msg1 = "-_-_-_-_-_-_-_-_";
+	msg4 = "          (C) to continue     ";
+	msg2 = "        Dare to crack me?          ";
+	topDisplayStatic();
+	move = 2;
+
+	key = get_char_key();
+	if(key == 'C') {
 		//display1('This part of the security system requires you enter values into the keypad');
 		//display2('Press c to continue');
-		int index = get_key_pressed();
-		key = lookup[index];
+		msg1 = "-_-_-_-_-_-_-_-_";
+		msg4 = "          (C) to continue     ";
+		msg2 = "        this is the keypad challenge       ";
+		topDisplayStatic();
+		key = get_char_key();
 	}
-	while(key != 'c') {
+	if(key == 'C') {
 		//display1('Once you continue from here, the timer will start');
 		//display2('Press c to continue');
-		int index = get_key_pressed();
-		key = lookup[index];
+		msg1 = "-_-_-_-_-_-_-_-_";
+		msg4 = "          (C) to continue     ";
+		msg2 = "       you must convert and enter values      ";
+		topDisplayStatic();
+		key = get_char_key();
 	}
-	char userI[4];
-
+	char userI [6] = "0x    ";
+	char comp [6] = "0xB846";
 	// GENERAL THOUGH PROCESSES:
 	//	no back space... just fill up 4 char array and if wrong will have sound to show improper val and will clear
-	int i = 0;
-	while(key != 'c') {
+	int i = 2;
+	int solved = 0;
+	while(!solved) {
 		// maybe generate values later...
-		if (i == 4){
-			if (userI == "b846")
+		if (i == 6){
+			if (userI[2] == 'B' & userI[3] == '8' & userI[4] == '4' & userI[5] == '6'){
+				move = 0;
+				msg1 = ("Correct!");
+				msg2 = ("now another...");
+				userI[0] = '0';
+				userI[1] = 'b';
+				userI[2] = ' ';
+				userI[3] = ' ';
+				userI[4] = ' ';
+				userI[5] = ' ';
+				topDisplayStatic();
+				nano_wait(2000000000); // 2000ms 2s
+				solved = 1;
 				break;
-			//display1("Wrong!");
-			//display2("try again...");
-			nano_wait(500000000); // 500ms
-			i = 0;
+			}
+			else{
+				move = 0;
+				msg1 = ("Wrong!");
+				msg2 = ("try again...");
+				userI[0] = '0';
+				userI[1] = 'x';
+				userI[2] = ' ';
+				userI[3] = ' ';
+				userI[4] = ' ';
+				userI[5] = ' ';
+				topDisplayStatic();
+				nano_wait(2000000000); // 2000ms 2s
+				move = 2;
+			}
+			i = 2;
 		}
+		char * m1 = userI;
 		//display1('XOR this into 0x47b9 to make 0xffff');
-		char str [6];
-		strcpy(str, '0x');
-		strcat(str, userI);
-		//display2(str);
-		int index = get_key_pressed();
-		key = lookup[index];
+		msg1 = m1;
+		msg4 = "      XOR this into 0x47b9 to make 0xffff     ";
+		msg2 = "      XOR this into 0x47b9 to make 0xffff     ";
+		topDisplayStatic();
+		key = get_char_key();
 		userI[i] = key;
+		topDisplayStatic();
 		i++;
 	}
-	i = 0;
-	while(key != 'c') {
+	move = 2;
+	i = 2;
+	solved = 0;
+	while(!solved) {
 		// maybe generate values later...
-		if (i == 3){
-			if (userI == "1011")
-				break;
-			//display1("Wrong!");
-			//display2("try again...");
-			nano_wait(500000000); // 500ms
-			i = 0;
-		}
-		//display1('Convert 0d11 to binary');
-		char str [6];
-		strcpy(str, '0b');
-		strcat(str, userI);
-		//display2(str);
-		int index = get_key_pressed();
-		key = lookup[index];
+		if (i == 6){
+					if (userI[2] == '1' & userI[3] == '0' & userI[4] == '1' & userI[5] == '1'){
+						move = 0;
+						msg1 = ("Correct!");
+						msg2 = ("");
+						userI[0] = '0';
+						userI[1] = 'b';
+						userI[2] = ' ';
+						userI[3] = ' ';
+						userI[4] = ' ';
+						userI[5] = ' ';
+						topDisplayStatic();
+						nano_wait(2000000000); // 2000ms 2s
+						solved = 1;
+						break;
+					}
+					else{
+						move = 0;
+						msg1 = ("Wrong!");
+						msg2 = ("try again...");
+						userI[0] = '0';
+						userI[1] = 'b';
+						userI[2] = ' ';
+						userI[3] = ' ';
+						userI[4] = ' ';
+						userI[5] = ' ';
+						topDisplayStatic();
+						nano_wait(2000000000); // 2000ms 2s
+						move = 2;
+					}
+					i = 2;
+				}
+		char * m1 = userI;
+		//display1('XOR this into 0x47b9 to make 0xffff');
+		msg1 = m1;
+		msg4 = "      What is 11 in binary     ";
+		msg2 = "      What is 11 in binary     ";
+		topDisplayStatic();
+		key = get_char_key();
 		userI[i] = key;
+		topDisplayStatic();
 		i++;
 	}
-	i = 0;
-	while(key != 'c') {
-		// maybe generate values later...
-		if (i == 3){
-			if (userI == "0021")
-				break;
-			//display1("Wrong!");
-			//display2("try again...");
-			nano_wait(500000000); // 500ms
-			i = 0;
-		}
-		//display1('ay whas 9 + 10');
-		char str [6];
-		strcpy(str, '0x');
-		strcat(str, userI);
-		//display2(str);
-		int index = get_key_pressed();
-		key = lookup[index];
-		userI[i] = key;
-		i++;
+	move = 2;
+	for (int n = 0; n < 7; n++){
+		msg1 = ("You beat me!");
+		msg2 = ("-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_");
+		msg4 = ("-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_");
+		topDisplayStatic();
+		nano_wait(1000000000); // 2000ms 2s
+	}
+	for (int n = 0; n < 7; n++){
+		msg1 = ("Now the next...");
+		msg2 = ("-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_");
+		msg4 = ("-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_");
+		topDisplayStatic();
+		nano_wait(1000000000); // 2000ms 2s
 	}
 }
