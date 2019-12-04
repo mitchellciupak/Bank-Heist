@@ -23,9 +23,10 @@ extern int move;
 void potsInit(void) {
 
     //GPIO SHIT
+    //SET PA4 as input and pa5 as output
     RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
-    GPIOA->MODER &= ~GPIO_MODER_MODER1;
-    GPIOA->MODER |= GPIO_MODER_MODER0 | GPIO_MODER_MODER1_0;
+    GPIOA->MODER &= ~GPIO_MODER_MODER5;
+    GPIOA->MODER |= GPIO_MODER_MODER4 | GPIO_MODER_MODER5_0;
 
 
     //Enable ADC
@@ -39,30 +40,32 @@ void potsInit(void) {
     int t = 0;
 
     msg1 = "Lock Challenge:";
-    msg4 = "          (C) to continue     ";
-    move = 1;
+    msg4 = "          (C) to Start!     ";
+    msg2 = "         Turn the lock to win";
+    move = 2;
     char c = get_char_key();
     int lock = 0;
     if(c == 'C'){
         while(lock == 0){
             ADC1->CHSELR = 0;
-            ADC1->CHSELR |= ADC_CHSELR_CHSEL0;
+            ADC1->CHSELR |= ADC_CHSELR_CHSEL4;
             while(!(ADC1->ISR & ADC_ISR_ADRDY));
             ADC1->CR |= ADC_CR_ADSTART;
             while(!(ADC1->ISR & ADC_ISR_EOC));
             float x = ADC1->DR * 3/4095.0;
             t++;
             if(x > 1.8 && x < 2.2){
-                GPIOA->BSRR |= GPIO_BSRR_BS_1;//0x2;
+                GPIOA->BSRR |= GPIO_BSRR_BS_5;//0x2;
                 //Play sound
 
                 //Do something to say its been picked correctly
                 lock = 1;
 
             }else{
-                GPIOA->BSRR |= GPIO_BSRR_BR_1;//~0X2;
+                GPIOA->BSRR |= GPIO_BSRR_BR_5;//~0X2;
             }
         }
-
     }
+    msg2 = "  Challenge Complete!";
+    msg4 = "  (C) to continue ";
 } 
