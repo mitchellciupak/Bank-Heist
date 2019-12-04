@@ -51,3 +51,19 @@ int main(void)
 
 }
 
+        msg2 = "(C) to continue";
+        topDisplayStatic();
+        bottomDisplayStatic();
+
+		//Find Difficulty
+		int difficultyMode = menuStartupDifficulty();
+
+		//Init Timer
+		menuInit(difficultyMode);
+
+	/*Challenge 1: Keypad Challenge*/
+	configKeyboard(); //TODO name to keypadInit();
+	  
+  // Else return success.
+  return SUCCESS;
+}

@@ -79,22 +79,24 @@ int menuStartupDifficulty() {
  */
 void menuInit(int mode) {
 
+	menuSetupGPIO();
+
 	switch (mode)
 	{
 	    case 1:
-	    	MIN = 60 * EASY_MIN;
+	    	MIN = EASY_MIN;
 	    	SEC = 0;
 	        break;
 	    case 2:
-	    	MIN = 60 * MED_MIN;
+	    	MIN = MED_MIN;
 	    	SEC = 0;
 	        break;
 	    case 3:
-	    	MIN = 60 * HARD_MIN;
+	    	MIN = HARD_MIN;
 	    	SEC = 0;
 	    	break;
 	    default:
-	    	MIN = 60 * EASY_MIN;
+	    	MIN = EASY_MIN;
 	    	SEC = 0;
 	}
 
@@ -141,7 +143,7 @@ void menuInitTim2(void) {
 int calls = 0;
 void TIM2_IRQHandler() {
 	//Acknowledge TIM6 interrupt
-		TIM2->SR &= ~TIM_SR_UIF;
+	TIM2->SR &= ~TIM_SR_UIF;
 
 	//Count down
 	calls++;
@@ -161,14 +163,18 @@ void TIM2_IRQHandler() {
  * Updates:
  *  	- 06/11/19 Mitchell Ciupak - Init
  *  	- 01/12/19 Mitchell Ciupak - Added Function Call
+ *  	- 02/12/19 Carrie	Kemmet - Blinking logic
  */
 void menuCountdown() {
-	int total = MIN * 60 + SEC;
-	--total;
+	if(SEC == 0 && MIN == 0){
+		segBlink();
+	}
+	else{
+		int total = MIN * 60 + SEC;
+		total--;
 
-	MIN = 60 % total;
-	SEC = total - (60 * MIN);
-
-	segDisp(MIN,SEC);
-
+		SEC = total % 60;
+		MIN = total / 60;
+		segDisp(MIN,SEC);
+	}
 }
