@@ -4,15 +4,15 @@
 #include <math.h>
 #include <stdlib.h>
 
-#define RATE 		100000
+#define RATE 		10000
 #define N 			1000
 #define PIRATE 		0
 #define ALARM 		1
 #define POTCHAL		2
 #define BEATS		24
 #define REFR		4
-#define BPM		426
-#define COUNT	(100000/(BPM/30))
+#define BPM			426
+#define COUNT		(RATE/(BPM/30))
 
 #define MULT	4
 #define B3		(246.94 * 4)

@@ -7,6 +7,7 @@
 #include "keyboard.h"
 #include "pots.h"
 #include "lcd.h"
+#include "audio.h"
 
 const char * msg1;
 const char * msg2;
@@ -18,8 +19,11 @@ int main(void)
 {
 	/*Menu*/
     //Init LCD Display
+	segInit();
+	segClear();
+	playAudio(PIRATE);
     initDisplay();
-    setup_gpio();
+    keypad_gpio();
     setup_timer3();
 
     //Display initial message
@@ -41,7 +45,7 @@ int main(void)
     int difficultyMode = menuStartupDifficulty();
 
     //Init Timer and 7-Seg
-    //menuInit(difficultyMode);
+    menuInit(difficultyMode);
 
 	/*Challenge 1: Keypad Challenge*/
     keypadChallenge(difficultyMode);

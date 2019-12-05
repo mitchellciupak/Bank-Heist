@@ -18,7 +18,7 @@ int count = 0;
 int potEn = 0;
 int beat_idx = 0;
 int refrain_idx = 0;
-int offset = 0;
+int offset1 = 0;
 int step = 0;
 
 void init_wavetable(void)
@@ -44,7 +44,7 @@ void setup_dac() {
 
 void setup_timer6() {
     RCC->APB1ENR |= RCC_APB1ENR_TIM6EN;
-    TIM6->PSC = 48 - 1;
+    TIM6->PSC = 480 - 1;
     TIM6->ARR = 10 - 1;
     TIM6->DIER |= TIM_DIER_UIE;
     TIM6->CR1 |= TIM_CR1_CEN;
@@ -142,11 +142,11 @@ void TIM6_DAC_IRQHandler() {
     else if(audioMode == ALARM){
     	alarmAudio();
     }
-    offset += step;
-    if((offset>>16) >= N){
-	offset -= N<<16;
+    offset1 += step;
+    if((offset1>>16) >= N){
+	offset1 -= N<<16;
     }
-    int sample = wavetable[offset>>16];
+    int sample = wavetable[offset1>>16];
     sample = sample / 16 + 2048;
     DAC->DHR12R1 = sample;
     DAC->SWTRIGR |= DAC_SWTRIGR_SWTRIG1;

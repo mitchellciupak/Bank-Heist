@@ -2,6 +2,7 @@
 #include "stm32f0_discovery.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include "audio.h"
 
 extern const char * msg1;
 extern const char * msg2;
@@ -44,6 +45,7 @@ void potsInit(void) {
     move = 2;
     char c = get_char_key();
     int lock = 0;
+    playAudio(POTCHAL);
     if(c == 'C'){
         msg1 ="Turn the lock!";
         topDisplayStatic();
@@ -78,13 +80,14 @@ void potsInit(void) {
             float x = ADC1->DR * 3/4095.0;
             if(x > 2.5 && x < 3.0){
                 //GPIOA->BSRR |= GPIO_BSRR_BS_5;//0x2;
-                //Play sound
+                potUpdate(1);
 
                 //Do something to say its been picked correctly
                 nano_wait(500000000 * 4);// Wait 2 seconds
                 if(x > 2.5 && x < 3.0){
                     lock = 2;
                 }
+                potUpdate(0);
             }
         }
         while(lock == 2){

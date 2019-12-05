@@ -58,7 +58,7 @@ char get_char_key() {
     return char_lookup[index];
 }
 
-void setup_gpio() {
+void keypad_gpio() {
 	// configs keypad input
 	RCC->AHBENR |= RCC_AHBENR_GPIOCEN;
 	GPIOC->MODER &= ~0xffff;
@@ -94,7 +94,7 @@ void TIM3_IRQHandler() {
 
 void keyIntro(void){
 	setup_timer3();
-	setup_gpio();
+	keypad_gpio();
 	// SCROLL NOTE:
 	//	instead of automatically scrolling
 	//	offset stimulated by user keypad press
