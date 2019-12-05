@@ -20,7 +20,7 @@ int main(void)
     //Init LCD Display
     initDisplay();
     setup_gpio();
-    setup_timer6();
+    setup_timer3();
 
     //Display initial message
     msg1 = "Safe Challenge!";
@@ -36,6 +36,7 @@ int main(void)
         msg4 = "          Pull Wire to Continue  ";
         topDisplayStatic();
     }
+  
     //Find Difficulty
     int difficultyMode = menuStartupDifficulty();
 
@@ -43,7 +44,7 @@ int main(void)
     //menuInit(difficultyMode);
 
 	/*Challenge 1: Keypad Challenge*/
-	//configKeyboard(); //TODO name to keypadInit();
+    keypadChallenge(difficultyMode);
 
 	/*Challenge 2: Pots Challenge*/
 	potsInit();
