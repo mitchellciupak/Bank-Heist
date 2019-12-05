@@ -13,12 +13,12 @@ extern int move;
  * Function:  potsInit(void)
  * --------------------
  * Description:  THE POTENTIOMETER SHOULD BE WIRED TO 3V AND GROUND
- * 				 OUTPUT OF THE POTENTIOMETER GOES TO PA0
- *				TEST LED PLUGGED INTO PA1
+ *               OUTPUT OF THE POTENTIOMETER GOES TO PA0
+ *              TEST LED PLUGGED INTO PA1
  * Returns:void
  * Example: potsInit();
  * Updates:
- *  	- 01/12/19 Colin Cassens - Init
+ *      - 01/12/19 Colin Cassens - Init
  */
 void potsInit(void) {
 
@@ -120,4 +120,4 @@ void potsInit(void) {
         msg2 = "      Challenge Complete!      ";
         msg4 = "      (C) to continue          ";
     }
-} 
+}

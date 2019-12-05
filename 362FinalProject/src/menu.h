@@ -25,9 +25,8 @@ int SEC = 0;
 void menuSetupGPIO() {
 	//enable the clock to GPIOA
 	RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
-	//Set PA0 to PA2 to Input and PA3 to Output (01000000)
-	GPIOA->MODER &= ~0x8f;
-	GPIOA->MODER |= 0x40;
+	//Set PA0 to PA2 to Input
+	GPIOA->MODER &= ~0x3f;
 }
 
 /*
@@ -49,7 +48,7 @@ int menuStartupDifficulty() {
 	//while(!(GPIOA->IDR & GPIO_IDR_0) & !(GPIOA->IDR & GPIO_IDR_0) & !(GPIOA->IDR & GPIO_IDR_0));
 
 	//Wait for a wire to be pulled from power
-	while((GPIOA->IDR & GPIO_IDR_0) && (GPIOA->IDR & GPIO_IDR_0) && (GPIOA->IDR & GPIO_IDR_0));
+	while((GPIOA->IDR & GPIO_IDR_0) && ((GPIOA->IDR & GPIO_IDR_1) && (GPIOA->IDR & GPIO_IDR_2)));
 
 	//Select Difficulty Based on Wire Pulled
 	if(!(GPIOA->IDR & GPIO_IDR_0)){//Hard
@@ -62,8 +61,6 @@ int menuStartupDifficulty() {
 		difficulty = 3;
 	}
 
-	//Turn On LED //TODO CHANGE TO START TIMER
-	GPIOA->ODR = 0b1000; //PA3
 
 	return difficulty;
 }
@@ -82,7 +79,7 @@ int menuStartupDifficulty() {
  */
 void menuInit(int mode) {
 
-	menuSetupGPIO();
+	//menuSetupGPIO();
 
 	switch (mode)
 	{
@@ -169,6 +166,7 @@ void TIM2_IRQHandler() {
  *  	- 02/12/19 Carrie	Kemmet - Blinking logic
  */
 void menuCountdown() {
+
 	if(SEC == 0 && MIN == 0){
 		segBlink();
 	}
