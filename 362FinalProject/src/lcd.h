@@ -24,7 +24,7 @@ void sendBit(int);
 void initDisplay(void);
 void topDisplayStatic();
 void topDisplayScroll(const char *);
-void bottomDisplayScroll(const char *);
+void bottomDisplayScroll();
 void bottomDisplayStatic();
 
 void (*display1)(const char *) = 0;
@@ -67,7 +67,7 @@ void initDisplay(){
 
 void TIM14_IRQHandler(){
     TIM14->SR &= ~TIM_SR_UIF;
-    bottomDisplayScroll(msg2);
+    bottomDisplayScroll();
 }
 
 void topDisplayStatic(){
@@ -85,11 +85,11 @@ void topDisplayScroll(const char *msg){
     }
 }
 
-void bottomDisplayScroll(const char *msg){
+void bottomDisplayScroll(){
     //nano_wait(100000000);
     if(move == 1){
         if(offset < 30){
-            display2(&msg[offset]);
+            display2(&msg2[offset]);
         }else if(offset < 32){
             display2(&msg3[offset-24]);
         }
@@ -97,11 +97,11 @@ void bottomDisplayScroll(const char *msg){
         if (offset == 32)
             offset = 0;
     }else if(move == 0){
-        display2(&msg[offset]);
+        display2(&msg2[offset]);
         offset = 0;
     }else if(move == 2){
         if(offset < 30){
-            display2(&msg[offset]);
+            display2(&msg2[offset]);
         }else if(offset < 32){
             display2(&msg3[offset-24]);
         }else if(offset < 60){
@@ -110,6 +110,8 @@ void bottomDisplayScroll(const char *msg){
         offset += 1;
         if (offset == 60)
             offset = 0;
+    }else{
+        display2("");
     }
 
 }

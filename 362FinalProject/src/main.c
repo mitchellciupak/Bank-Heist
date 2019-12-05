@@ -23,30 +23,25 @@ int main(void)
     setup_timer3();
 
     //Display initial message
-    keypadChallenge(3);
-    move = 0;
-	msg1 = ("Guess you win");
-	msg2 = ("      :(     ");
-	topDisplayStatic();
-//    msg1 = "Safe Challenge!";
-//    msg4 = "          (C) to continue     ";
-//    msg2 = "        Main Menu:            ";
-//    topDisplayStatic();
-//    move = 2;
-//    char c = get_char_key();
-//    move = 0;
-//    if(c == 'C'){
-//        msg1 = "Select Difficulty:";
-//        msg2 = "         Red(Hard) : Yellow(Med) : Green(Easy)";
-//        topDisplayStatic();
-//        move = 1;
-//        //bottomDisplayScroll(msg2);
-//    }
+    msg1 = "Safe Challenge!";
+    msg4 = "          (C) to continue     ";
+    msg2 = "        Main Menu:            ";
+    topDisplayStatic();
+    move = 2;
+    char c = get_char_key();
+
+    if(c == 'C'){
+        msg1 = "SelectDifficulty:";
+        msg2 = "   Red(Hard) : Yellow(Med) : Green(Easy)";
+        msg4 = "          Pull Wire to Continue  ";
+        topDisplayStatic();
+    }
+  
     //Find Difficulty
     int difficultyMode = menuStartupDifficulty();
 
     //Init Timer and 7-Seg
-    menuInit(difficultyMode);
+    //menuInit(difficultyMode);
 
 	/*Challenge 1: Keypad Challenge*/
     keypadChallenge(difficultyMode);

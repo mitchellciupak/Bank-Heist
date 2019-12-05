@@ -4,7 +4,11 @@
 #include <stdio.h>
 #include <string.h>
 
-
+extern const char * msg1;
+extern const char * msg2;
+extern const char * msg3;
+extern const char * msg4;
+extern int move;
 
 int8_t history[16] = {0};
 int8_t lookup[16] = {1,4,7,0xe,2,5,8,0,3,6,9,0xf,0xa,0xb,0xc,0xd};
@@ -71,6 +75,7 @@ void setup_timer3() {
     NVIC->ISER[0] = 1<<TIM3_IRQn;
     TIM3->CR1 |= TIM_CR1_CEN;
 }
+
 void TIM3_IRQHandler() {
 	TIM3->SR &= ~TIM_SR_UIF;
 	int row = (GPIOC->IDR >> 4) & 0xf;
