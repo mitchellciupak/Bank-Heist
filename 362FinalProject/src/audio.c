@@ -50,6 +50,7 @@ void setup_timer6() {
     TIM6->CR1 |= TIM_CR1_CEN;
 
     NVIC->ISER[0] = 1<<TIM6_DAC_IRQn;
+    NVIC_SetPriority(TIM6_DAC_IRQn,3);
 }
 
 int calc_note(int val){
@@ -163,6 +164,7 @@ void playAudio(int mode){
 
 void stopAudio(){
 	TIM6->CR1 &= ~TIM_CR1_CEN;
+	step = 0;
 }
 
 

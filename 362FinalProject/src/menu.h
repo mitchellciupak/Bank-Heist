@@ -4,14 +4,21 @@
 #include <stdlib.h>
 
 #include "seg.h"
+#include "audio.h"
 
 //Globals
 int EASY_MIN = 10;
 int MED_MIN = 6;
 int HARD_MIN = 3;
 
-int MIN = 0;
-int SEC = 0;
+int MIN = -1;
+int SEC = -1;
+extern const char * msg1;
+extern const char * msg2;
+extern const char * msg3;
+extern const char * msg4;
+extern int move;
+extern int offset;
 
 /*
  * Function:  menuSetupGPIO(void)
@@ -65,6 +72,32 @@ int menuStartupDifficulty() {
 	return difficulty;
 }
 
+/*
+ * Function:  menuInitTim6(void)
+ * --------------------
+ * Description: Enable's Timer 6(update event occurs every 1ms)
+ * Returns:void
+ * Example:init_time6();
+ * Updates:
+ *      - 06/11/19 Mitchell Ciupak - Init
+ *      - 01/12/19 Mitchell Ciupak - Moved to Timer 2 from Timer 6
+ */
+void menuInitTim2(void) {
+    //Enable clock to Timer 6.
+    RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
+
+    //Set PSC and ARR values so that the timer update event occurs exactly once every 1ms
+    TIM2->PSC = 480 - 1;
+    TIM2->ARR = 100 - 1;
+
+    //Enable UIE in the TIMER6's DIER register.
+    TIM2->DIER |= TIM_DIER_UIE;
+    TIM2->CR1 = TIM_CR1_CEN;
+
+    //Enable TIM6 interrupt in NVIC's ISER register.
+    NVIC->ISER[0] = 1<<TIM2_IRQn;
+}
+
 
 /*
  * Function:  menuInit(mode)
@@ -79,12 +112,10 @@ int menuStartupDifficulty() {
  */
 void menuInit(int mode) {
 
-	//menuSetupGPIO();
-
 	switch (mode)
 	{
 	    case 1:
-	    	MIN = EASY_MIN;
+	    	MIN = HARD_MIN;
 	    	SEC = 0;
 	        break;
 	    case 2:
@@ -92,43 +123,19 @@ void menuInit(int mode) {
 	    	SEC = 0;
 	        break;
 	    case 3:
-	    	MIN = HARD_MIN;
+	    	MIN = EASY_MIN;
 	    	SEC = 0;
 	    	break;
 	    default:
 	    	MIN = EASY_MIN;
 	    	SEC = 0;
 	}
-
+	MIN = 0;
+	SEC = 15;
 	menuInitTim2();
 
 }
 
-/*
- * Function:  menuInitTim6(void)
- * --------------------
- * Description: Enable's Timer 6(update event occurs every 1ms)
- * Returns:void
- * Example:init_time6();
- * Updates:
- *  	- 06/11/19 Mitchell Ciupak - Init
- *  	- 01/12/19 Mitchell Ciupak - Moved to Timer 2 from Timer 6
- */
-void menuInitTim2(void) {
-	    //Enable clock to Timer 6.
-		RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
-
-		//Set PSC and ARR values so that the timer update event occurs exactly once every 1ms
-		TIM2->PSC = 480 - 1;
-		TIM2->ARR = 100 - 1;
-
-		//Enable UIE in the TIMER6's DIER register.
-		TIM2->DIER |= TIM_DIER_UIE;
-		TIM2->CR1 = TIM_CR1_CEN;
-
-		//Enable TIM6 interrupt in NVIC's ISER register.
-		NVIC->ISER[0] = 1<<TIM2_IRQn;
-	}
 
 /*
  * Function:  TIM2_IRQHandler()
@@ -169,6 +176,18 @@ void menuCountdown() {
 
 	if(SEC == 0 && MIN == 0){
 		segBlink();
+		stopAudio();
+		playAudio(ALARM);
+		// Disable tim2 interrupt
+		TIM2->CR1 &= ~TIM_CR1_CEN;
+//		move = 0;
+        msg1 = "                 ";
+        msg2 = "                 ";
+        topDisplayStatic();
+        nano_wait(1000000000);
+    //    move = 2;
+        offset = 0;
+		gameEnd_Failure();
 	}
 	else{
 		int total = MIN * 60 + SEC;

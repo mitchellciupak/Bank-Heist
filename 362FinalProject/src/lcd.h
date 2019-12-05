@@ -61,13 +61,17 @@ void initDisplay(){
     TIM14->DIER |= TIM_DIER_UIE;
     NVIC->ISER[0] = 1<<(TIM14_IRQn);
     TIM14->CR1 |= TIM_CR1_CEN;
+    NVIC_SetPriority(TIM14_IRQn,1);
 
     init_lcd();
 }
 
 void TIM14_IRQHandler(){
     TIM14->SR &= ~TIM_SR_UIF;
-    bottomDisplayScroll();
+    if (move == 2)
+        bottomDisplayScroll();
+    else if (move == 0)
+        bottomDisplayStatic();
 }
 
 void topDisplayStatic(){
@@ -97,7 +101,8 @@ void bottomDisplayScroll(){
         if (offset == 32)
             offset = 0;
     }else if(move == 0){
-        display2(&msg2[offset]);
+//        display2(&msg2[offset]);
+        display2(msg2);
         offset = 0;
     }else if(move == 2){
         if(offset < 30){

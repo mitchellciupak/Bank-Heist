@@ -12,7 +12,7 @@
 #define BEATS		24
 #define REFR		4
 #define BPM			426
-#define COUNT		(RATE/(BPM/30))
+#define COUNT		(RATE/(BPM/60))
 
 #define MULT	4
 #define B3		(246.94 * 4)

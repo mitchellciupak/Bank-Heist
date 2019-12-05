@@ -27,9 +27,9 @@ int main(void)
     setup_timer3();
 
     //Display initial message
-    msg1 = "Safe Challenge!";
+    msg1 = "___THE HEIST___";
     msg4 = "          (C) to continue     ";
-    msg2 = "        Main Menu:            ";
+    msg2 = "          (C) to continue     ";
     topDisplayStatic();
     move = 2;
     char c = get_char_key();
@@ -52,5 +52,17 @@ int main(void)
 
 	/*Challenge 2: Pots Challenge*/
 	potsInit();
+
+
+	//game win display
+	// needs to stop timer
+	// acknowledges state to user
+	gameEnd_Success();
+	//game fail display
+	// needs to interrupt game state
+	// acknowledges state to user
+
+	// testing
+
 
 }

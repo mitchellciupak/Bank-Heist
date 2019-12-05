@@ -20,6 +20,8 @@ extern const char * msg3;
 extern const char * msg4;
 extern int move;
 extern int offset;
+extern int MIN;
+extern int SEC;
 
 void nano_wait(unsigned int n) {
     asm(    "        mov r0,%0\n"
@@ -35,6 +37,13 @@ int get_key_press() {
 				return i;
 			}
 		}
+		if (MIN == 0 & SEC == 0){
+            move = 0;
+            msg1 = "                 ";
+            msg2 = "                 ";
+            topDisplayStatic();
+            return 0;
+        }
 	}
 }
 int get_key_release() {
@@ -73,6 +82,7 @@ void setup_timer3() {
     TIM3->ARR = (200-1);
     TIM3->DIER |= TIM_DIER_UIE;
     NVIC->ISER[0] = 1<<TIM3_IRQn;
+    NVIC_SetPriority(TIM3_IRQn,0);
     TIM3->CR1 |= TIM_CR1_CEN;
 }
 
@@ -171,7 +181,7 @@ void keyIntro(void){
 	send = mess;
 	topDisplayStatic();
 	nano_wait(150000000);
-	mess[9] = '2';
+	mess[9] = '1';
 	mess[10] = '_';
 	send = mess;
 	topDisplayStatic();
@@ -208,18 +218,32 @@ void keyIntro(void){
 
 	key = get_char_key();
 	int display = 1;
-	nano_wait(400000000000);
+	nano_wait(500000000);
 	while (display){
+        if (MIN == 0 & SEC == 0){
+            move = 0;
+            msg1 = "                 ";
+            msg2 = "                 ";
+            topDisplayStatic();
+            return;
+        }
 		if(key == 'C') {
 			//display1('This part of the security system requires you enter values into the keypad');
 			//display2('Press c to continue');
 			offset = 0;
-			for (int i = 0; i < 10; i++){
+			for (int i = 0; i < 9; i++){
 				msg1 = "-_-_-_-_-_-_-_-_";
 				msg4 = "       you must convert and enter values      ";
 				msg2 = "        this is the conversion challenge       ";
 				topDisplayStatic();
-				nano_wait(400000000000);
+				nano_wait(500000000);
+				if (MIN == 0 & SEC == 0){
+				    move = 0;
+                    msg1 = "                 ";
+                    msg2 = "                 ";
+                    topDisplayStatic();
+                    return;
+				}
 			}
 			display = 0;
 
@@ -228,25 +252,123 @@ void keyIntro(void){
 			key = get_char_key();
 		}
 	}
-	move = 0;
-	msg1 = " ";
-	msg2 = " ";
-	topDisplayStatic();
+
 }
+
+void gameEnd_Success(void){
+//    TIM2->CR1 &= ~TIM_CR1_CEN;
+    move = 0;
+    msg1 = " ";
+    msg2 = " ";
+    topDisplayStatic();
+    TIM2->DIER &= ~TIM_DIER_UIE;
+//    I2C1_stop();
+    move = 2;
+    offset = 0;
+    for (int i = 0; i < 5; i++){
+        msg1 = "-_-_-_-_-_-_-_-_";
+        msg2 = "       enjoy your spoils      ";
+        msg4 = "        you have earned them       ";
+        topDisplayStatic();
+        nano_wait(1000000000);
+        if (MIN == 0 & SEC == 0){
+            move = 0;
+            msg1 = "                 ";
+            msg2 = "                 ";
+            topDisplayStatic();
+            return;
+        }
+    }
+    offset = 0;
+    for (int n = 0; n < 5; n++){
+        msg1 = ("-_-_-_-_-_-_-_-_");
+        msg2 = ("        the security system is disarmed       ");
+        msg4 = ("        I will now self destruct         ");
+        topDisplayStatic();
+        nano_wait(1000000000); // 2000ms 2s
+    }
+    offset = 0;
+    for (int n = 0; n < 2; n++){
+        msg1 = ("-_-_-_-_-_-_-_-_");
+        msg2 = ("        ha ha just kidding       ");
+        msg4 = ("        ha ha just kidding       ");
+        topDisplayStatic();
+        nano_wait(1000000000); // 2000ms 2s
+    }
+    while(1){
+        move = 0;
+        msg1 = ("     you win...");
+        msg2 = ("       :P     ");
+        topDisplayStatic();
+        return;
+    }
+}
+
+void gameEnd_Failure(void){
+    move = 0;
+    msg1 = "                 ";
+    msg2 = "                 ";
+    topDisplayStatic();
+    nano_wait(1000000000);
+//    move = 2;
+    offset = 0;
+//    move = 2;
+//    move = 2;
+    for (int n = 0; n < 5; n++){
+        msg1 = ("you lose...");
+        msg2 = "testing";
+//        msg2 = ("-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_");
+//        msg4 = ("-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_");
+
+        topDisplayStatic();
+        nano_wait(1000000000); // 2000ms 2s
+    }
+    offset = 0;
+    for (int n = 0; n < 5; n++){
+        msg1 = ("try again...");
+        msg2 = "testing";
+//        msg2 = ("-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_");
+//        msg4 = ("-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_");
+//        move = 2;
+        topDisplayStatic();
+        nano_wait(1000000000); // 2000ms 2s
+    }
+    while(1){
+        move = 0;
+        msg1 = ("     loser ");
+        msg2 = ("       xP     ");
+        topDisplayStatic();
+    }
+}
+
+
 
 void keypadOutro(void){
 	move = 2;
-	for (int n = 0; n < 7; n++){
+	for (int n = 0; n < 3; n++){
+	    if (MIN == 0 & SEC == 0){
+	        move = 0;
+	        msg1 = "                 ";
+	        msg2 = "                 ";
+	        topDisplayStatic();
+	        return;
+	    }
 		msg1 = ("You beat me!");
-		offset = 0;
 		msg2 = ("-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_");
 		msg4 = ("-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_");
 		topDisplayStatic();
 		nano_wait(1000000000); // 2000ms 2s
 	}
-	for (int n = 0; n < 7; n++){
+	offset = 0;
+	for (int n = 0; n < 3; n++){
+	    if (MIN == 0 & SEC == 0){
+	        move = 0;
+	        msg1 = "                 ";
+	        msg2 = "                 ";
+	        topDisplayStatic();
+	        return;
+	    }
 		msg1 = ("Now the next...");
-		offset = 0;
 		msg2 = ("-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_");
 		msg4 = ("-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_");
 		topDisplayStatic();
@@ -257,14 +379,21 @@ void keypadOutro(void){
 void keypadChallenge(int diff){
 	keyIntro();
 	char * key = 0;
-	if (diff == 3){
-		char userI [16] = "0x        xor   ";
+	if (diff == 1){
+		char userI [16] = "0x        xor     ";
 		// GENERAL THOUGH PROCESSES:
 		//	no back space... just fill up 4 char array and if wrong will have sound to show improper val and will clear
 		int i = 2;
 		int solved = 0;
 		while(!solved) {
 			// maybe generate values later...
+		    if (MIN == 0 & SEC == 0){
+		        move = 0;
+		        msg1 = "                 ";
+		        msg2 = "                 ";
+		        topDisplayStatic();
+		        return;
+		    }
 			if (i == 6){
 				if (userI[2] == 'B' & userI[3] == '8' & userI[4] == '4' & userI[5] == '6'){
 					move = 0;
@@ -324,6 +453,13 @@ void keypadChallenge(int diff){
 		userI[12] = 'T';
 		while(!solved) {
 			// maybe generate values later...
+		    if (MIN == 0 & SEC == 0){
+		        move = 0;
+		        msg1 = "                 ";
+		        msg2 = "                 ";
+		        topDisplayStatic();
+		        return;
+		    }
 			if (i == 6){
 				if (userI[2] == '3' & userI[3] == 'B' & userI[4] == 'D' & userI[5] == 'A'){
 					move = 0;
@@ -380,8 +516,16 @@ void keypadChallenge(int diff){
 		char userI [16] = "0b              ";
 		int i = 2;
 		int solved = 0;
+		move = 0;
 		while(!solved) {
 			// maybe generate values later...
+		    if (MIN == 0 & SEC == 0){
+		        move = 0;
+		        msg1 = "                 ";
+		        msg2 = "                 ";
+		        topDisplayStatic();
+		        return;
+		    }
 			if (i == 6){
 				if (userI[2] == '1' & userI[3] == '0' & userI[4] == '1' & userI[5] == '1'){
 					move = 0;
@@ -439,6 +583,13 @@ void keypadChallenge(int diff){
 		userI[11] = 'O';
 		userI[12] = 'T';
 		while(!solved) {
+		    if (MIN == 0 & SEC == 0){
+		        move = 0;
+		        msg1 = "                 ";
+		        msg2 = "                 ";
+		        topDisplayStatic();
+		        return;
+		    }
 			// maybe generate values later...
 			if (i == 6){
 				if (userI[2] == '3' & userI[3] == 'B' & userI[4] == 'D' & userI[5] == 'A'){
@@ -492,11 +643,19 @@ void keypadChallenge(int diff){
 			topDisplayStatic();
 		}
 	}
-	else if (diff == 1){
+	else if (diff == 3){
+	    move = 0;
 		char userI [16] = "0b              ";
 		int i = 2;
 		int solved = 0;
 		while(!solved) {
+		    if (MIN == 0 & SEC == 0){
+		        move = 0;
+		        msg1 = "                 ";
+		        msg2 = "                 ";
+		        topDisplayStatic();
+		        return;
+		    }
 			// maybe generate values later...
 			if (i == 6){
 				if (userI[2] == '1' & userI[3] == '0' & userI[4] == '1' & userI[5] == '1'){
@@ -553,6 +712,13 @@ void keypadChallenge(int diff){
 		i = 2;
 		solved = 0;
 		while(!solved) {
+		    if (MIN == 0 & SEC == 0){
+		        move = 0;
+		        msg1 = "                 ";
+		        msg2 = "                 ";
+		        topDisplayStatic();
+		        return;
+		    }
 			// maybe generate values later...
 			if (i == 6){
 				if (userI[2] == '1' & userI[3] == '0' & userI[4] == '0' & userI[5] == '1'){
@@ -608,6 +774,13 @@ void keypadChallenge(int diff){
 		i = 2;
 		solved = 0;
 		while(!solved) {
+		    if (MIN == 0 & SEC == 0){
+		        move = 0;
+		        msg1 = "                 ";
+		        msg2 = "                 ";
+		        topDisplayStatic();
+		        return;
+		    }
 			// maybe generate values later...
 			if (i == 6){
 				if (userI[2] == '1' & userI[3] == '1' & userI[4] == '0' & userI[5] == '0'){
