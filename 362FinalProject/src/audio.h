@@ -4,7 +4,7 @@
 #include <math.h>
 #include <stdlib.h>
 
-#define RATE 		10000
+#define RATE 		100000
 #define N 			1000
 #define PIRATE 		0
 #define ALARM 		1
@@ -12,9 +12,9 @@
 #define BEATS		24
 #define REFR		4
 #define BPM			426
-#define COUNT		(RATE/(BPM/60))
+#define COUNT		(RATE/(BPM/30))
+#define MULT        (N / ((RATE) * (1<<16)))
 
-#define MULT	4
 #define B3		(246.94 * 4)
 #define D4		(293.66 * 4)
 #define E4		(329.63 * 4)

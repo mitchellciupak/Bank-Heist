@@ -130,8 +130,6 @@ void menuInit(int mode) {
 	    	MIN = EASY_MIN;
 	    	SEC = 0;
 	}
-	MIN = 0;
-	SEC = 15;
 	menuInitTim2();
 
 }
@@ -176,8 +174,8 @@ void menuCountdown() {
 
 	if(SEC == 0 && MIN == 0){
 		segBlink();
-		stopAudio();
-		playAudio(ALARM);
+		//stopAudio();
+		//playAudio(ALARM);
 		// Disable tim2 interrupt
 		TIM2->CR1 &= ~TIM_CR1_CEN;
 //		move = 0;

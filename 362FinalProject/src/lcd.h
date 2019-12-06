@@ -2,8 +2,6 @@
 #include "stm32f0_discovery.h"
 #include <stdio.h>
 #include <stdlib.h>
-
-
 #define SPI_DELAY 1337
 
 // Extern declarations of function pointers in main.c.

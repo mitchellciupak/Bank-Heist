@@ -310,6 +310,7 @@ void gameEnd_Failure(void){
     msg2 = "                 ";
     topDisplayStatic();
     nano_wait(1000000000);
+    playAudio(ALARM);
 //    move = 2;
     offset = 0;
 //    move = 2;

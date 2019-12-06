@@ -44,7 +44,7 @@ void setup_dac() {
 
 void setup_timer6() {
     RCC->APB1ENR |= RCC_APB1ENR_TIM6EN;
-    TIM6->PSC = 480 - 1;
+    TIM6->PSC = 48 - 1;
     TIM6->ARR = 10 - 1;
     TIM6->DIER |= TIM_DIER_UIE;
     TIM6->CR1 |= TIM_CR1_CEN;
@@ -90,7 +90,7 @@ void pirateAudio(){
     if(count < COUNT - sep){
     	val = pirates[refrain_idx][beat_idx];
     	note = calc_note(val);
-    	step = (note)* N / (RATE) * (1<<16);
+    	step = (note)* MULT;    //POUND DEFINE
     }
     else{
     	step = 0;
@@ -110,25 +110,31 @@ void pirateAudio(){
 }
 
 void alarmAudio(void){
-	if(count < COUNT*10 - 1000){
+	/*if(count < COUNT*10 - 1000){
 		step += .00001 * step;
 	}
 	else{
-		step = C5 * N / (RATE) * (1<<16);
+		step = C5 * MULT;
+	}*/
+	if(count < COUNT/2){
+	    step = E4 * MULT;
+	}
+	else{
+	    step = 0;
 	}
 	count++;
-	count = count > COUNT*10 ? 0 : count;
+	count = count > COUNT ? 0 : count;
 }
 
 void potUpdate(int stage){
 	if(stage == 1){
-		step = E4 * N / (RATE) * (1<<16);
+		step = E4 * MULT;
 	}
 	else if(stage == 2){
-		step = G4 * N / (RATE) * (1<<16);
+		step = G4 * MULT;
 	}
 	else if(stage == 3){
-		step = B4 * N / (RATE) * (1<<16);
+		step = B4 * MULT;
 	}
 	else{
 		step = 0;
@@ -141,7 +147,14 @@ void TIM6_DAC_IRQHandler() {
     	pirateAudio();
     }
     else if(audioMode == ALARM){
-    	alarmAudio();
+        if(count < COUNT/2){
+            step = E4 * MULT;
+        }
+        else{
+            step = 0;
+        }
+        count++;
+        count = count > COUNT ? 0 : count;
     }
     offset1 += step;
     if((offset1>>16) >= N){
@@ -155,6 +168,7 @@ void TIM6_DAC_IRQHandler() {
 
 void playAudio(int mode){
     audioMode = mode;
+    count = 0;
     init_wavetable();
     setup_gpio();
     setup_dac();
